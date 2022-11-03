@@ -13,8 +13,8 @@ def find_all_reaction(train, bridge, x_t):
     load_whl = train["weight"]/(3*2)
     load_list = [bdy1_whl1, bdy1_whl2, bdy2_whl1, bdy2_whl2, bdy3_whl1, bdy3_whl2]
     
-    norm_l = (load_whl*(bdy1_whl1 + bdy1_whl2 + bdy2_whl1 + bdy2_whl2 + bdy3_whl1 + bdy3_whl2)+bridge["length"]*bridge["weight_dis"])/bridge["length"]
-    norm_r = train["weight"] - norm_l
+    norm_l = (load_whl*(bdy1_whl1 + bdy1_whl2 + bdy2_whl1 + bdy2_whl2 + bdy3_whl1 + bdy3_whl2)+(bridge["weight_dis"]*bridge["length"]**2)/2)/bridge["length"]
+    norm_r = train["weight"] + bridge["weight_dis"]*bridge["length"] - norm_l
     return
 
 def I(bridge):
@@ -44,3 +44,5 @@ if __name__ == '__main__':
     train = {"weight": 400, "height": 85, "width": 75, "whl_width": 10, "btw_whl": 176, "edge": 52, "btw_train_whl": 164}
     bridge = {"length": 1250, "weight_dis": 0}
     x_t = 10
+    find_all_reaction(train, bridge, x_t)
+    print(norm_r, norm_l)
