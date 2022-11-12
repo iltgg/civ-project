@@ -120,7 +120,7 @@ class Bridge:
 
         x = []
         v = []
-        
+
         x.append(0)
         v.append(reactions[0])
 
@@ -137,23 +137,26 @@ class Bridge:
         m = []
         m.append(0)
         for i, shear in enumerate(v):
-            m.append(m[-1]+shear*widths[i])     
-        
+            m.append(m[-1]+shear*widths[i])
+
         return x, m
 
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
-    # t = Train(146, 400)
-    t = Train(0, 400)
-    b = Bridge(1200)
+    # t = Train(146, 400) # train in middle of bridge
+    t = Train(0, 400)  # left-most position, weight
+    b = Bridge(1200)  # length
 
-    shear_force_data = b.calculate_shear_force(
-        t.get_wheel_positions(), t.get_point_loads())
+    # get positions and loads, in extra variables for clarity
+    wheel_positions = t.get_wheel_positions()
+    wheel_loads = t.get_point_loads()
+    
+    shear_force_data = b.calculate_shear_force(wheel_positions, wheel_loads)
 
     bending_moment_data = b.calculate_bending_moment(
-        t.get_wheel_positions(), t.get_point_loads())
+        wheel_positions, wheel_loads)
 
     # Plot data
     plt.subplot(211)
