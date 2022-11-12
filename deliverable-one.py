@@ -91,6 +91,7 @@ class Bridge:
 
         x.append(0)
         v.append(0)
+
         x.append(0)
         v.append(reactions[0])
 
@@ -119,10 +120,7 @@ class Bridge:
 
         x = []
         v = []
-        m = []
-
-        # x.append(0)
-        # v.append(0)
+        
         x.append(0)
         v.append(reactions[0])
 
@@ -131,22 +129,13 @@ class Bridge:
             v.append(v[-1]-loads[i])
 
         x.append(self.length)
-        # v.append(v[-1]+reactions[1])
 
-        # print(x)
-        # print(v)
-
-        m.append(0)
         widths = []
-        # widths.append(load_positions[0])
-        # for i, pos in enumerate(load_positions):
-        #     widths.append(pos-x[i])
-        # widths.append(x[-1]-load_positions[-1])
-
         for i in range(len(x)-1):
             widths.append(x[i+1]-x[i])
-        # print(widths)
 
+        m = []
+        m.append(0)
         for i, shear in enumerate(v):
             m.append(m[-1]+shear*widths[i])     
         
@@ -160,22 +149,13 @@ if __name__ == "__main__":
     t = Train(0, 400)
     b = Bridge(1200)
 
-    # print(t.get_wheel_positions())
-    # print(t.get_point_loads())
-    # print(b.calculate_reaction_forces(t.get_wheel_positions(), t.get_point_loads()))
-
     shear_force_data = b.calculate_shear_force(
         t.get_wheel_positions(), t.get_point_loads())
-    # print(shear_force_data[0])
-    # print(shear_force_data[1])
 
     bending_moment_data = b.calculate_bending_moment(
         t.get_wheel_positions(), t.get_point_loads())
-    # print(bending_moment_data[0])
-    # print(bending_moment_data[1])
-    
-    # print()
 
+    # Plot data
     plt.subplot(211)
     plt.xlabel('distance (mm)')
     plt.ylabel('shear force (N)')
