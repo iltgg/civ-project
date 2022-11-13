@@ -152,7 +152,7 @@ if __name__ == "__main__":
     # get positions and loads, in extra variables for clarity
     wheel_positions = t.get_wheel_positions()
     wheel_loads = t.get_point_loads()
-    
+
     shear_force_data = b.calculate_shear_force(wheel_positions, wheel_loads)
 
     bending_moment_data = b.calculate_bending_moment(
@@ -164,6 +164,17 @@ if __name__ == "__main__":
     plt.ylabel('shear force (N)')
     plt.title('Shear Force Diagram')
     plt.step(shear_force_data[0], shear_force_data[1], where='post')
+    # for i in range(0,241, 10):
+    #         t = Train(i, 400)  # left-most position, weight
+    #         b = Bridge(1200)  # length
+
+    #         # get positions and loads, in extra variables for clarity
+    #         wheel_positions = t.get_wheel_positions()
+    #         wheel_loads = t.get_point_loads()
+
+    #         shear_force_data = b.calculate_shear_force(wheel_positions, wheel_loads)
+
+    #         plt.step(shear_force_data[0], shear_force_data[1], where='post')
 
     plt.subplot(212)
     plt.xlabel('distance (mm)')
@@ -171,6 +182,17 @@ if __name__ == "__main__":
     plt.title('Bending Moment Diagram')
     plt.gca().invert_yaxis()
     plt.plot(bending_moment_data[0], bending_moment_data[1])
+    # for i in range(0,241, 10):
+    #     t = Train(i, 400)  # left-most position, weight
+    #     b = Bridge(1200)  # length
+
+    #     # get positions and loads, in extra variables for clarity
+    #     wheel_positions = t.get_wheel_positions()
+    #     wheel_loads = t.get_point_loads()
+
+    #     bending_moment_data = b.calculate_bending_moment(
+    #     wheel_positions, wheel_loads)
+    #     plt.plot(bending_moment_data[0], bending_moment_data[1])
 
     plt.tight_layout()
     plt.show()
