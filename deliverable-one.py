@@ -159,40 +159,21 @@ if __name__ == "__main__":
         wheel_positions, wheel_loads)
 
     # Plot data
-    plt.subplot(211)
-    plt.xlabel('distance (mm)')
-    plt.ylabel('shear force (N)')
-    plt.title('Shear Force Diagram')
-    plt.step(shear_force_data[0], shear_force_data[1], where='post')
-    # for i in range(0,241, 10):
-    #         t = Train(i, 400)  # left-most position, weight
-    #         b = Bridge(1200)  # length
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.set_figheight(5)
+    fig.set_figwidth(10)
 
-    #         # get positions and loads, in extra variables for clarity
-    #         wheel_positions = t.get_wheel_positions()
-    #         wheel_loads = t.get_point_loads()
+    ax1.set_xlabel('distance (mm)')
+    ax1.set_ylabel('shear force (N)')
+    ax1.set_title('Shear Force Diagram')
+    ax1.step(shear_force_data[0], shear_force_data[1], where='post')
 
-    #         shear_force_data = b.calculate_shear_force(wheel_positions, wheel_loads)
+    ax2.set_xlabel('distance (mm)')
+    ax2.set_ylabel('bending moment (Nmm)')
+    ax2.set_title('Bending Moment Diagram')
+    ax2.invert_yaxis()
+    ax2.plot(bending_moment_data[0], bending_moment_data[1])
 
-    #         plt.step(shear_force_data[0], shear_force_data[1], where='post')
 
-    plt.subplot(212)
-    plt.xlabel('distance (mm)')
-    plt.ylabel('bending moment (Nmm)')
-    plt.title('Bending Moment Diagram')
-    plt.gca().invert_yaxis()
-    plt.plot(bending_moment_data[0], bending_moment_data[1])
-    # for i in range(0,241, 10):
-    #     t = Train(i, 400)  # left-most position, weight
-    #     b = Bridge(1200)  # length
-
-    #     # get positions and loads, in extra variables for clarity
-    #     wheel_positions = t.get_wheel_positions()
-    #     wheel_loads = t.get_point_loads()
-
-    #     bending_moment_data = b.calculate_bending_moment(
-    #     wheel_positions, wheel_loads)
-    #     plt.plot(bending_moment_data[0], bending_moment_data[1])
-
-    plt.tight_layout()
+    fig.tight_layout()
     plt.show()
