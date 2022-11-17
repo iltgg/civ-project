@@ -56,6 +56,8 @@ identify factors of safety
 
 use multiple train locations
 
+Material properties to solve
+
 ## Grapher
 
 Graph data, transforming into graphable data if necessary
