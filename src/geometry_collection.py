@@ -38,6 +38,7 @@ class GeometryCollection:
         I = 0
         cen = self.find_centroid()
         for geometry_object in self.geometry_objects:
+            # print(geometry_object.area)
             I += geometry_object.find_I()
             I += geometry_object.area * \
                 (cen - geometry_object.find_centroid())**2
@@ -116,13 +117,13 @@ if __name__ == "__main__":
     from geometry_object import *
     r1 = Rect(0, 75+1.27, 100, 1.27)  # top
 
-    r2 = Rect(10-1.27, 75, 1.27, 75-1.27)  # verticals
-    r3 = Rect(90, 75, 1.27, 75-1.27)
+    r2 = Rect(10, 75, 1.27, 75-1.27)  # verticals
+    r3 = Rect(90-1.27, 75, 1.27, 75-1.27)
 
-    r4 = Rect(10, 75, 5, 1.27)  # lil nibs
-    r5 = Rect(90-5, 75, 5, 1.27)
+    r4 = Rect(10+1.27, 75, 5, 1.27)  # lil nibs
+    r5 = Rect(90-5-1.27, 75, 5, 1.27)
 
-    r6 = Rect(10-1.27, 1.27, 80+1.27+1.27, 1.27)  # bottom
+    r6 = Rect(10, 1.27, 80, 1.27)  # bottom
 
     gc = GeometryCollection((r1, r2, r3, r4, r5, r6))
 
