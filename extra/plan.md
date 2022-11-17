@@ -15,6 +15,14 @@
     - Q will use much of what I uses however the “b” at any given y is needed. This requires an analysis of the parts of the geometry that are touching
 - If a diagonal component will be used, the program must be able to take this into account 
 
+## To find:
+
+- Shear force, bending moment
+- applied stresses, flexural and bending
+- thin plate buckling capacities
+- Graphically display capacities and applied stress (or is it forces???)
+- also calculate FOS (max applied to min capacity)
+
 ## Geometry object:
 - Take size, and position (relative to an origin)
 - return area and position
