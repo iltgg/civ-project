@@ -47,11 +47,11 @@ class GeometryCollection:
     def find_Q(self, y):
         pass
 
-    def display_geometry(self, edgecolor='black') -> None:
+    def display_geometry(self, bounding) -> None:
         """display the geometry collection visually
 
         Args:
-            edgecolor (str, optional): color of lines. Defaults to 'black'.
+            bounding (list): (x, y) size to display
         """
 
         # https://matplotlib.org/stable/gallery/shapes_and_collections/compound_path.html#sphx-glr-gallery-shapes-and-collections-compound-path-py
@@ -62,15 +62,23 @@ class GeometryCollection:
             vertices += self.__return_vertices(geometry_object)
 
         path = Path(vertices, codes)
-        pathpatch = PathPatch(path, facecolor=facecolor, edgecolor=edgecolor)
+        pathpatch = PathPatch(path, facecolor='grey', edgecolor='black', alpha=0.7)
 
         fig, ax = plt.subplots()
-        ax.add_patch(pathpatch)
-        ax.set_title('Cross section')
 
-        ax.autoscale_view()
+        ax.add_patch(pathpatch)
+        ax.hlines(self.find_centroid(), 0, bounding[0], color='blue', alpha=0.6, label='centroid')
+
+        ax.set_title('Cross section')
+        ax.set_ylabel('y (mm)')
+        ax.set_xlabel('x (mm)')
+        fig.legend()
+        fig.set_size_inches(8,8)
+        ax.set_aspect('equal', adjustable='box')
+        ax.set_xlim(0, bounding[0])
+        ax.set_ylim(0, bounding[1])
         ax.minorticks_on()
-        ax.grid(which='both', linestyle='--', color='grey', alpha=0.3)
+        ax.grid(which='both', linestyle='--', color='grey', alpha=0.5)
 
         plt.show()
 
@@ -121,4 +129,4 @@ if __name__ == "__main__":
     print(gc.find_centroid())
     print(gc.find_I())
 
-    gc.display_geometry()
+    gc.display_geometry((120,100))
