@@ -1,13 +1,20 @@
+from typing import Iterable
+
 class Bridge:
-    def __init__(self, length) -> None:
+    def __init__(self, length: int, cross_sections: Iterable, support_length) -> None:
         """Initialize a bridge object
 
         Args:
             length (number): length of the bridge (minus supports) in millimeters
+            cross_sections (iterable): cross sections of the bridge defined by the following data structure:
+                (span_section, cross_section: geometry_collection)
+            support_length (number): length of the supports
         """
         self.length = length
+        self.cross_sections = cross_sections
+        self.support_length = support_length
 
-    def calculate_reaction_forces(self, load_positions, loads) -> tuple:
+    def calculate_reaction_forces(self, load_positions: Iterable, loads:Iterable) -> tuple:
         """Calculates the reaction forces provided by A---------B\n
         Assumptions:
         - All point loads are downwards
@@ -35,7 +42,7 @@ class Bridge:
 
         return A, B
 
-    def calculate_shear_force(self, load_positions, loads, reactions=False):
+    def calculate_shear_force(self, load_positions: Iterable, loads: Iterable, reactions=False):
         """Calculates the shear force in bridge
 
         Args:

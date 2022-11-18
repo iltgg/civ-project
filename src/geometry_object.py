@@ -14,6 +14,8 @@ class Rect():
         self.y_length = y_length
         self.area = x_length*y_length
 
+        self.joints = None
+
     def find_area_below(self, y:float) -> float:
         """find the area below a given y
 
