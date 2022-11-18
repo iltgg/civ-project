@@ -16,6 +16,12 @@ I would give this an MIT lisente but I'm pretty sure making this a public reposi
 
 ### geometry_object
 
+tags:
+- display:True
+- display:False
+- joint-display:True
+- joint-display:False
+
 ### geometry_collection
 
 ### bridge
