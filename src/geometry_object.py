@@ -7,7 +7,7 @@ class Rect():
             y (number): top left corner
             x_length (number): x length, right direction
             y_length (number): y length, down direction
-            tags (str, optional): set a tag for use, format space separated 'ARG1 ARG2'. Defaults to None.
+            tags (str, optional): set a tag for use, format 'ARG1:VALUE1 ARG2:VALUE2 ...'. Defaults to None.
             id (str, optional): set an id for use. Defaults to None.
         """
         self.x = x
@@ -67,22 +67,42 @@ class Rect():
 
 
 class TagHandler():
-    def __init__(self, tags, defaults) -> None:
+    def __init__(self, tags: str, defaults: str) -> None:
+        """create a tag handler object, booleans and ints have their value casted
+
+        tags must be in the format 'ARG1:VALUE1 ARG2:VALUE2 ...'
+
+        Args:
+            tags (str): tags
+            defaults (str): default tags
+        """
         self.input_tags = tags
         self.tags = {}
 
         self.__init_tags(defaults)
         if tags:
             self.__init_tags(tags)
-            
 
-    def get_tag(self, tag):
+    def get_tag(self, tag: str):
+        """get the value of a tag, return None if nonexistent
+
+        Args:
+            tag (str): tag
+
+        Returns:
+            str | int | bool | None: the value of the tag if it exists
+        """
         try:
             return self.tags[tag]
         except KeyError:
             return None
 
-    def __init_tags(self, tags):
+    def __init_tags(self, tags: str) -> None:
+        """sets tags
+
+        Args:
+            tags (str): tags to set
+        """
         for tag in tags.split(' '):
             args = tag.split(':')
             if args[1] == 'True':

@@ -51,7 +51,9 @@ class GeometryCollection:
     def find_Q(self, y):
         pass
 
-    def find_joints(self):
+    def find_joints(self) -> None:
+        """Find the joints of all geometry objects, automatically assigns the joints to each object
+        """
         for i, geometry_object in enumerate(self.geometry_objects):
             vertices = geometry_object.get_vertices()
             joints = []
@@ -67,7 +69,16 @@ class GeometryCollection:
 
             geometry_object.joints = joints
 
-    def __find_collinear_side(self, vertices_1, vertices_2):
+    def __find_collinear_side(self, vertices_1: Iterable, vertices_2: Iterable) -> tuple:
+        """return the collinear side of two boxes, None if no collinear side exists
+
+        Args:
+            vertices_1 (iterable): vertices
+            vertices_2 (iterable): vertices
+
+        Returns:
+            tuple: ((x1, y1), (x2, y2)), coordinates defining joint 
+        """
         bounds = self.__get_bounds(vertices_1)
         collinear_side = []
 
@@ -85,7 +96,7 @@ class GeometryCollection:
                     if bounded_y or aligned_y:
                         collinear_side.append(vertex)
 
-        collinear_side = list(set(collinear_side))
+        collinear_side = list(set(collinear_side)) # hacky solution
         if len(collinear_side) == 2:
             return collinear_side
 
@@ -110,7 +121,15 @@ class GeometryCollection:
         if len(collinear_side) == 2:
             return collinear_side
 
-    def __get_bounds(self, vertices):
+    def __get_bounds(self, vertices: Iterable) -> tuple:
+        """generate the bounds of all sides of the box
+
+        Args:
+            vertices (iterable): vertices
+
+        Returns:
+            tuple: (((x1, y1), (x2, y2)), ((x2, y2), (x3, y3)), ...) clockwise tuple of box sides
+        """
         bounds = []
         temp = vertices+(vertices[0],)
 
