@@ -18,6 +18,8 @@ class GeometryCollection:
         """
         self.geometry_objects = geometry_objects
 
+        self.__find_joints()
+
     def find_centroid(self) -> float:
         """find the centroid for the collective relative to y = 0, assumes the centroid is horizontal
 
@@ -50,7 +52,7 @@ class GeometryCollection:
     def find_Q(self, y):
         pass
 
-    def find_joints(self) -> None:
+    def __find_joints(self) -> None:
         """Find the joints of all geometry objects, automatically assigns the joints to each object
         """
         for i, geometry_object in enumerate(self.geometry_objects):
@@ -244,18 +246,16 @@ class GeometryCollection:
 
 if __name__ == "__main__":
     from geometry_object import *
-    r1 = Rect(0, 75+1.27, 100, 1.27, 'joint-display:False')  # top
+    r1 = Rect(0, 75+1.27, 100, 1.27)  # top
 
     r2 = Rect(10, 75, 1.27, 75-1.27)  # verticals
     r3 = Rect(90-1.27, 75, 1.27, 75-1.27)
 
-    r4 = Rect(10+1.27, 75, 5, 1.27, 'joint-display:False')  # lil nibs
-    r5 = Rect(90-5-1.27, 75, 5, 1.27, 'joint-display:False')
+    r4 = Rect(10+1.27, 75, 5, 1.27)  # lil nibs
+    r5 = Rect(90-5-1.27, 75, 5, 1.27)
 
     r6 = Rect(10, 1.27, 80, 1.27)  # bottom
 
     gc = GeometryCollection((r1, r2, r3, r4, r5, r6))
-
-    gc.find_joints()
 
     gc.display_geometry((120, 100), (6, 6), True)
