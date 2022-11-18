@@ -1,5 +1,6 @@
 from typing import Iterable
 
+
 class Bridge:
     def __init__(self, length: int, cross_sections: Iterable, support_length) -> None:
         """Initialize a bridge object
@@ -14,7 +15,7 @@ class Bridge:
         self.cross_sections = cross_sections
         self.support_length = support_length
 
-    def calculate_reaction_forces(self, load_positions: Iterable, loads:Iterable) -> tuple:
+    def calculate_reaction_forces(self, load_positions: Iterable, loads: Iterable) -> tuple:
         """Calculates the reaction forces provided by A---------B\n
         Assumptions:
         - All point loads are downwards
@@ -110,3 +111,67 @@ class Bridge:
             m.append(m[-1]+shear*widths[i])
 
         return x, m
+
+    def solve_shear_force(self, load_positions: Iterable, loads: Iterable, reactions=False):
+        if not reactions:
+            reactions = self.calculate_reaction_forces(load_positions, loads)
+
+        x = []
+        v = []
+
+        x.append(0)
+        v.append(reactions[0])
+
+        for i, pos in enumerate(load_positions):
+            x.append(pos)
+            v.append(v[-1]-loads[i])
+
+        x.append(self.length)
+        v.append(v[-1])
+
+        self.x_v = x
+        self.v = v
+
+    def get_shear_force(self, x):
+        if x > self.x_v[-1]:
+            return self.x_v[-1]
+
+        if x == 0:
+            return self.x_v[0]
+
+        i = 0
+        while not (x > self.x_v[i] and x <= self.x_v[i+1]):
+            i += 1
+
+        return self.v[i]
+
+    def get_bending_moment(self, x):
+        area = 0
+        
+        i = 0
+        while not (x > self.x_v[i] and x <= self.x_v[i+1]):
+            i += 1
+
+        for j in range(1, i+1):
+
+            area+=self.v[j-1]*(self.x_v[j]-self.x_v[j-1])
+
+        area += self.get_shear_force(x)*(x-self.x_v[i])
+
+        return area
+
+
+
+if __name__ == "__main__":
+    import train
+
+    b = Bridge(1200, 0, 0)
+    t = train.Train(100, 400)
+
+    b.solve_shear_force(t.get_wheel_positions(), t.get_point_loads())
+    # print(b.calculate_bending_moment(t.get_wheel_positions(),t.get_point_loads()))
+    print(b.x_v)
+    print(b.v)
+
+    print(b.get_shear_force(100))
+    print(b.get_bending_moment(600))
