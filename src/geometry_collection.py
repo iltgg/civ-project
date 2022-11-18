@@ -142,7 +142,7 @@ class GeometryCollection:
     def find_thin_plate_type(self):
         pass
 
-    def display_geometry(self, bounding, window_size, show_joints=False) -> None:
+    def display_geometry(self, bounding, window_size, show_joints=False, show_data=True) -> None:
         """display the geometry collection visually
 
         Args:
@@ -179,8 +179,12 @@ class GeometryCollection:
             joint_pathpatch = PathPatch(joint_path, edgecolor='red', lw=1)
             ax.add_patch(joint_pathpatch)
 
-        ax.hlines(self.find_centroid(), 0,
-                  bounding[0], color='blue', alpha=0.6, label='centroid')
+        if show_data:
+            ax.hlines(self.find_centroid(), 0,
+                      bounding[0], color='blue', alpha=0.6, label='centroid')
+
+            str = f'I: {self.find_I():.3f}\ncentroid: {self.find_centroid():.3f}'
+            ax.text(bounding[0]-30, bounding[1]+1, str)
 
         ax.set_title('Cross section')
         ax.set_ylabel('y (mm)')
