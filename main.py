@@ -1,4 +1,4 @@
-import bridgelib as blib
+import bridgeplotlib as bpl
 
 if __name__ == "__main__":
-    print(blib.test())
+    print(bpl.test())

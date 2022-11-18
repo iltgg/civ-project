@@ -4,9 +4,9 @@ George Chen, Benjamin Low, Casey Takahashi
 
 I would give this an MIT lisente but I'm pretty sure making this a public repository would break the academic integrity rules or something
 
-## bridgelib.py
+## bridgeplotlib.py
 
-`bridgelib` is a library meant for the structural analysis of a simply supported beam bridge.
+`bridgeplotlib` is a library meant for the structural analysis of a simply supported beam bridge.
 
 ## Documentation WIP
 
