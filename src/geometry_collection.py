@@ -28,7 +28,6 @@ class GeometryCollection:
         sum_of_areas = 0
         for geometry_object in self.geometry_objects:
             cen += geometry_object.find_centroid()*geometry_object.area
-            # print(geometry_object.find_centroid())
             sum_of_areas += geometry_object.area
 
         return cen/sum_of_areas
@@ -57,8 +56,6 @@ class GeometryCollection:
         for i, geometry_object in enumerate(self.geometry_objects):
             vertices = geometry_object.get_vertices()
             joints = []
-
-            print(i, vertices)
 
             for other_object in self.geometry_objects[:i]+self.geometry_objects[i+1:]:
                 joint = self.__find_collinear_side(
@@ -96,7 +93,7 @@ class GeometryCollection:
                     if bounded_y or aligned_y:
                         collinear_side.append(vertex)
 
-        collinear_side = list(set(collinear_side)) # hacky solution
+        collinear_side = list(set(collinear_side))  # hacky solution
         if len(collinear_side) == 2:
             return collinear_side
 
@@ -153,6 +150,8 @@ class GeometryCollection:
         """
 
         # https://matplotlib.org/stable/gallery/shapes_and_collections/compound_path.html#sphx-glr-gallery-shapes-and-collections-compound-path-py
+        fig, ax = plt.subplots()
+
         codes = []
         vertices = []
         joint_codes = []
@@ -169,18 +168,17 @@ class GeometryCollection:
                             joint_codes += self.__return_code('line')
                             joint_vertices += joint
                             joint_vertices += (0, 0),
-        print(joint_vertices)
+
         path = Path(vertices, codes)
         pathpatch = PathPatch(path, facecolor='grey',
                               edgecolor='black', alpha=0.7)
-
-        joint_path = Path(joint_vertices, joint_codes)
-        joint_pathpatch = PathPatch(joint_path, edgecolor='red', lw=1)
-
-        fig, ax = plt.subplots()
-
         ax.add_patch(pathpatch)
-        ax.add_patch(joint_pathpatch)
+
+        if show_joints:
+            joint_path = Path(joint_vertices, joint_codes)
+            joint_pathpatch = PathPatch(joint_path, edgecolor='red', lw=1)
+            ax.add_patch(joint_pathpatch)
+
         ax.hlines(self.find_centroid(), 0,
                   bounding[0], color='blue', alpha=0.6, label='centroid')
 
@@ -253,9 +251,6 @@ if __name__ == "__main__":
     r6 = Rect(10, 1.27, 80, 1.27)  # bottom
 
     gc = GeometryCollection((r1, r2, r3, r4, r5, r6))
-
-    for i in gc:
-        print(i.get_tag('display'))
 
     gc.find_joints()
 
