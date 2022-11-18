@@ -44,7 +44,9 @@ class Bridge:
         return A, B
 
     def calculate_shear_force(self, load_positions: Iterable, loads: Iterable, reactions=False):
-        """Calculates the shear force in bridge
+        """# Depreciated
+        
+        Calculates the shear force in bridge
 
         Args:
             load_positions (iterable): positions of point loads (mm)
@@ -76,7 +78,9 @@ class Bridge:
         return x, v
 
     def calculate_bending_moment(self, load_positions, loads, reactions=False):
-        """Calculates bending moments in bridge
+        """# Depreciated
+        
+        Calculates bending moments in bridge
 
         Args:
             load_positions (iterable): positions of point loads (mm)
@@ -113,6 +117,14 @@ class Bridge:
         return x, m
 
     def solve_shear_force(self, load_positions: Iterable, loads: Iterable, reactions=False):
+        """solves and stores shear force in object, uses given loads and load positions 
+
+        Args:
+            load_positions (iterable): positions of point loads (mm)
+            loads (iterable): force of each point load, index should match load_positions
+            reactions (bool, optional): calculated using given values if not provided
+        """
+        
         if not reactions:
             reactions = self.calculate_reaction_forces(load_positions, loads)
 
@@ -132,7 +144,15 @@ class Bridge:
         self.x_v = x
         self.v = v
 
-    def get_shear_force(self, x):
+    def get_shear_force(self, x: float) -> float:
+        """return the shear force at point x, requires valid shear force array in memory
+
+        Args:
+            x (number): position from the left of the bridge
+
+        Returns:
+            float: shear force
+        """
         if x > self.x_v[-1]:
             return self.x_v[-1]
 
@@ -145,21 +165,27 @@ class Bridge:
 
         return self.v[i]
 
-    def get_bending_moment(self, x):
+    def get_bending_moment(self, x: float) -> float:
+        """return the bending moment at point x, requires valid shear force array in memory
+
+        Args:
+            x (number): position from the left of the bridge
+
+        Returns:
+            float: bending moment
+        """
         area = 0
-        
+
         i = 0
         while not (x > self.x_v[i] and x <= self.x_v[i+1]):
             i += 1
 
         for j in range(1, i+1):
-
-            area+=self.v[j-1]*(self.x_v[j]-self.x_v[j-1])
+            area += self.v[j-1]*(self.x_v[j]-self.x_v[j-1])
 
         area += self.get_shear_force(x)*(x-self.x_v[i])
 
         return area
-
 
 
 if __name__ == "__main__":
