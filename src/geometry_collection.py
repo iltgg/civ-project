@@ -6,9 +6,10 @@ import matplotlib.pyplot as plt
 
 from math import isclose
 
+PRECISION = 0.001
 
 class GeometryCollection:
-    PRECISION = 0.001  # three decimal points of precision
+    
 
     def __init__(self, geometry_objects: Iterable) -> None:
         """create a geometry collection object, only supports Rect() geometry objects
@@ -16,9 +17,14 @@ class GeometryCollection:
         Args:
             geometry_objects (Iterable): an array of geometry_object
         """
+        self.PRECISION = PRECISION
         self.geometry_objects = geometry_objects
 
         self.__find_joints()
+        self.centroid = self.find_centroid()
+        self.I = self.find_I()
+        self.top = self.find_top()
+        self.bottom = self.find_bottom()
 
     def find_centroid(self) -> float:
         """find the centroid for the collective relative to y = 0, assumes the centroid is horizontal
@@ -51,6 +57,20 @@ class GeometryCollection:
 
     def find_Q(self, y):
         pass
+
+    def find_top(self):
+        top = self.centroid
+        for geometry_object in self:
+            if geometry_object.y > top:
+                top = geometry_object.y
+        return top
+
+    def find_bottom(self):
+        bottom = self.centroid
+        for geometry_object in self:
+            if geometry_object.y < bottom:
+                bottom = geometry_object.y
+        return bottom
 
     def __find_joints(self) -> None:
         """Find the joints of all geometry objects, automatically assigns the joints to each object
@@ -142,6 +162,9 @@ class GeometryCollection:
         return bounds
 
     def find_thin_plate_type(self):
+        pass
+
+    def get_side_geometry(self):
         pass
 
     def display_geometry(self, bounding, window_size, show_joints=False, show_data=True) -> None:

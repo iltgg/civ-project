@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src import bridge, train, geometry_collection, geometry_object, grapher
+from src import bridge, train, geometry_collection, geometry_object, grapher, constants
 
 
 def display_old(Bridge: object, train_weight, movement_increment):
@@ -95,4 +95,44 @@ def display(Bridge, train_weight, movement_increment):
         ax2.plot(x, bmd)
 
     fig.tight_layout()
+    plt.show()
+
+
+def display_max_flexural_stress(Bridge, train):
+    fig, ax = plt.subplots(1, 1)
+    fig.set_figheight(5)
+    fig.set_figwidth(10)
+
+    ax.set_xlabel('distance (mm)')
+    ax.set_ylabel('stress (Mpa)')
+    ax.set_title('Flexural Stress')
+
+    ax.hlines(0, 0, Bridge.length, color='grey')
+
+    top = []
+    bottom = []
+
+    x = np.linspace(0.01, Bridge.length-0.01, 10_000)
+
+    # get positions and loads, in extra variables for clarity
+    # wheel_positions = t.get_wheel_positions()
+    # wheel_loads = t.get_point_loads()
+
+    Bridge.solve_shear_force(
+        train.get_wheel_positions(), train.get_point_loads())
+
+    for i in x:
+        top.append(Bridge.get_flexural_stress(
+            i, Bridge.cross_sections.get_cross_section(i).top))
+
+    for i in x:
+        bottom.append(Bridge.get_flexural_stress(
+            i, Bridge.cross_sections.get_cross_section(i).bottom))
+
+    ax.plot(x, top)
+    ax.plot(x, bottom)
+
+    ax.text(0,7,f'max compression: {min(top)} Mpa\nmax tension: {max(bottom)} Mpa')
+    ax.grid(which='both', linestyle='--', color='grey', alpha=0.5)
+
     plt.show()

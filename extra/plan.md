@@ -15,6 +15,9 @@
     - Q will use much of what I uses however the “b” at any given y is needed. This requires an analysis of the parts of the geometry that are touching
 - If a diagonal component will be used, the program must be able to take this into account 
 
+- Add new geometry object type to support a folded geometry piece
+    - requires rework of joint finder
+
 ## To find:
 
 - Shear force, bending moment

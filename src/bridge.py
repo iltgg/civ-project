@@ -2,18 +2,15 @@ from typing import Iterable
 
 
 class Bridge:
-    def __init__(self, length: int, cross_sections: Iterable, support_length) -> None:
+    def __init__(self, length: int, cross_sections: object) -> None:
         """Initialize a bridge object
 
         Args:
             length (number): length of the bridge (minus supports) in millimeters
-            cross_sections (iterable): cross sections of the bridge defined by the following data structure:
-                (span_section, cross_section: geometry_collection)
-            support_length (number): length of the supports
+            
         """
         self.length = length
         self.cross_sections = cross_sections
-        self.support_length = support_length
 
     def calculate_reaction_forces(self, load_positions: Iterable, loads: Iterable) -> tuple:
         """Calculates the reaction forces provided by A---------B\n
@@ -45,7 +42,7 @@ class Bridge:
 
     def calculate_shear_force(self, load_positions: Iterable, loads: Iterable, reactions=False):
         """# Depreciated
-        
+
         Calculates the shear force in bridge
 
         Args:
@@ -79,7 +76,7 @@ class Bridge:
 
     def calculate_bending_moment(self, load_positions, loads, reactions=False):
         """# Depreciated
-        
+
         Calculates bending moments in bridge
 
         Args:
@@ -124,7 +121,7 @@ class Bridge:
             loads (iterable): force of each point load, index should match load_positions
             reactions (bool, optional): calculated using given values if not provided
         """
-        
+
         if not reactions:
             reactions = self.calculate_reaction_forces(load_positions, loads)
 
@@ -187,6 +184,36 @@ class Bridge:
 
         return area
 
+    def get_flexural_stress(self, x, y):
+        section = self.cross_sections.get_cross_section(x)
+
+        # (M*d)(I)
+
+        M = self.get_bending_moment(x)
+        I = section.find_I()
+        d = section.find_centroid() - y
+
+        return (M*d)/I
+
+
+class CrossSections:
+    def __init__(self, cross_sections: Iterable, bounds: Iterable) -> None:
+        self.cross_sections = cross_sections
+        self.bounds = bounds  # must be in order and correspond
+
+    def get_cross_section(self, x):
+        i = 0
+        while not self.__return_bounded(x, self.bounds[i]):
+            i += 1
+
+        return self.cross_sections[i]
+
+    def __return_bounded(self, x, bound):
+        if x >= bound[0] and x <= bound[1]:
+            return True
+        else:
+            return False
+
 
 if __name__ == "__main__":
     import train
@@ -199,5 +226,5 @@ if __name__ == "__main__":
     print(b.x_v)
     print(b.v)
 
-    print(b.get_shear_force(100))
+    print(b.get_shear_force(600))
     print(b.get_bending_moment(600))
