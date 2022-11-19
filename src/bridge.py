@@ -194,6 +194,17 @@ class Bridge:
         d = section.find_centroid() - y
 
         return (M*d)/I
+    
+    def get_max_force_flexural(self, x, y):
+        section = self.cross_sections.get_cross_section(x)
+
+        I = section.I
+        d = section.centroid - y 
+
+        if M > 0:
+            return 30*I/d
+        return 6*I/d
+        
 
 
 class CrossSections:

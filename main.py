@@ -29,5 +29,5 @@ if __name__ == "__main__":
 
     b = bridge.Bridge(1200, cross_sections)
 
-    # display_max_flexural_stress(b, train.Train(100, 400))
-    display(b, 400, 10)
+    display_max_flexural_stress(b, train.Train(100, 400))
+    # display(b, 400, 10)
