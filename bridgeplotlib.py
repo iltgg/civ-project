@@ -122,6 +122,28 @@ def display(Bridge, train_weight, movement_increment):
     plt.show()
 
 
+def maximum_bending_moment(Bridge, train_weight, movement_increment):
+    maxes = []
+
+    for i in range(0, 241, movement_increment):
+        t = train.Train(i, train_weight)  # left-most position, weight
+        bmd = []
+        x = np.linspace(0.01, Bridge.length-0.01, 10_000)
+
+        # get positions and loads, in extra variables for clarity
+        wheel_positions = t.get_wheel_positions()
+        wheel_loads = t.get_point_loads()
+
+        Bridge.solve_shear_force(wheel_positions, wheel_loads)
+
+        for i in x:
+            bmd.append(Bridge.get_bending_moment(i))
+
+        maxes.append(max(bmd))
+
+    return max(bmd)
+
+
 def display_max_flexural_stress(Bridge, train):
     fig, ax = plt.subplots(1, 1)
     fig.set_figheight(5)
@@ -147,12 +169,11 @@ def display_max_flexural_stress(Bridge, train):
 
     for i in x:
         top.append(Bridge.get_max_force_flexural(
-            i, Bridge.cross_sections.get_cross_section(i).top, train.weight))
+            i, Bridge.cross_sections.get_cross_section(i).top))
 
     for i in x:
-        0
         bottom.append(Bridge.get_max_force_flexural(
-            i, Bridge.cross_sections.get_cross_section(i).bottom, train.weight))
+            i, Bridge.cross_sections.get_cross_section(i).bottom))
 
     ax.plot(x, top)
     ax.plot(x, bottom)
@@ -162,6 +183,13 @@ def display_max_flexural_stress(Bridge, train):
     ax.grid(which='both', linestyle='--', color='grey', alpha=0.5)
 
     plot_bending_moment(Bridge, train.weight, 10, ax)
+
+    max_bm = maximum_bending_moment(Bridge, train.weight, 10)
+    # remove None hack
+    print(
+        f'FOS Tension: {max(list(filter(lambda item: item is not None, bottom)))/max_bm}')
+    print(
+        f'FOS Compression: {max(list(filter(lambda item: item is not None, top)))/max_bm}')
 
     plt.show()
 
