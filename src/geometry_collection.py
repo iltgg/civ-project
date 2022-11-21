@@ -8,17 +8,19 @@ from math import isclose
 
 PRECISION = 0.001
 
-class GeometryCollection:
-    
 
-    def __init__(self, geometry_objects: Iterable) -> None:
+class GeometryCollection:
+
+    def __init__(self, geometry_objects: Iterable, geometry_object_groups=()) -> None:
         """create a geometry collection object, only supports Rect() geometry objects
 
         Args:
             geometry_objects (Iterable): an array of geometry_object
+            geometry_object_groups (Iterable): (ID, ID, ...), (ID, ID, ...), ...
         """
         self.PRECISION = PRECISION
         self.geometry_objects = geometry_objects
+        self.geometry_object_groups = geometry_object_groups
 
         self.__find_joints()
         self.centroid = self.find_centroid()
@@ -80,11 +82,17 @@ class GeometryCollection:
             joints = []
 
             for other_object in self.geometry_objects[:i]+self.geometry_objects[i+1:]:
-                joint = self.__find_collinear_side(
-                    vertices, other_object.get_vertices())
+                same_group = False
+                for group in self.geometry_object_groups:
+                    if geometry_object.id in group and other_object.id in group:
+                        same_group = True
 
-                if joint:
-                    joints.append(joint)
+                if not same_group:
+                    joint = self.__find_collinear_side(
+                        vertices, other_object.get_vertices())
+
+                    if joint:
+                        joints.append(joint)
 
             geometry_object.joints = joints
 
@@ -271,14 +279,14 @@ if __name__ == "__main__":
     from geometry_object import *
     r1 = Rect(0, 75+1.27, 100, 1.27)  # top
 
-    r2 = Rect(10, 75, 1.27, 75-1.27)  # verticals
-    r3 = Rect(90-1.27, 75, 1.27, 75-1.27)
+    r2 = Rect(10, 75, 1.27, 75-1.27, id='folded-section')  # verticals
+    r3 = Rect(90-1.27, 75, 1.27, 75-1.27, id='folded-section')
 
-    r4 = Rect(10+1.27, 75, 5, 1.27)  # lil nibs
-    r5 = Rect(90-5-1.27, 75, 5, 1.27)
+    r4 = Rect(10+1.27, 75, 5, 1.27, id='folded-section')  # lil nibs
+    r5 = Rect(90-5-1.27, 75, 5, 1.27, id='folded-section')
 
-    r6 = Rect(10, 1.27, 80, 1.27)  # bottom
+    r6 = Rect(10, 1.27, 80, 1.27, id='folded-section')  # bottom
 
-    gc = GeometryCollection((r1, r2, r3, r4, r5, r6))
+    gc = GeometryCollection((r1, r2, r3, r4, r5, r6), (('folded-section',),))
 
     gc.display_geometry((120, 100), (6, 6), True)

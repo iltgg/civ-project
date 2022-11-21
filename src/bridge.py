@@ -7,7 +7,7 @@ class Bridge:
 
         Args:
             length (number): length of the bridge (minus supports) in millimeters
-            
+
         """
         self.length = length
         self.cross_sections = cross_sections
@@ -141,6 +141,8 @@ class Bridge:
         self.x_v = x
         self.v = v
 
+        self.load = sum(loads)
+
     def get_shear_force(self, x: float) -> float:
         """return the shear force at point x, requires valid shear force array in memory
 
@@ -194,30 +196,36 @@ class Bridge:
         d = section.find_centroid() - y
 
         return (M*d)/I
-    
-    def get_max_force_flexural(self, x, y):
-        section = self.cross_sections.get_cross_section(x)
 
-        I = section.I
-        d = section.centroid - y 
+    def get_max_force_flexural(self, x, y, ignore_diaphragms=True):
+        if self.cross_sections.get_cross_section_type(x) == 'diaphragm':
+            return None
 
-        if M > 0:
-            return 30*I/d
-        return 6*I/d
-        
+        flexural_stress = self.get_flexural_stress(x, y)
+
+        if flexural_stress > 0:
+            return 30/flexural_stress * self.get_bending_moment(x)
+        return -6/flexural_stress * self.get_bending_moment(x)
 
 
 class CrossSections:
-    def __init__(self, cross_sections: Iterable, bounds: Iterable) -> None:
+    def __init__(self, cross_sections: Iterable, bounds: Iterable, types: Iterable) -> None:
         self.cross_sections = cross_sections
         self.bounds = bounds  # must be in order and correspond
+        self.types = types
 
     def get_cross_section(self, x):
+        return self.cross_sections[self.__return_index(x)]
+
+    def get_cross_section_type(self, x):
+        return self.types[self.__return_index(x)]
+
+    def __return_index(self, x):
         i = 0
         while not self.__return_bounded(x, self.bounds[i]):
             i += 1
 
-        return self.cross_sections[i]
+        return i
 
     def __return_bounded(self, x, bound):
         if x >= bound[0] and x <= bound[1]:

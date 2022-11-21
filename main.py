@@ -21,10 +21,13 @@ if __name__ == "__main__":
 
     # diaphragm.display_geometry((120, 100), (6, 6), True)
 
+    types = ('section', 'diaphragm', 'section', 'diaphragm', 'section')
+
     cross_sections = bridge.CrossSections(
         (section, diaphragm, section, diaphragm, section),
         ((0, 399.365), (399.365, 400.635), (400.635, 799.365),
-         (799.365, 800.635), (800.635, 1200))
+         (799.365, 800.635), (800.635, 1200)),
+        types
     )
 
     b = bridge.Bridge(1200, cross_sections)

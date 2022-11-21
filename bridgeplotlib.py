@@ -147,17 +147,18 @@ def display_max_flexural_stress(Bridge, train):
 
     for i in x:
         top.append(Bridge.get_max_force_flexural(
-            i, Bridge.cross_sections.get_cross_section(i).top))
+            i, Bridge.cross_sections.get_cross_section(i).top, train.weight))
 
     for i in x:
+        0
         bottom.append(Bridge.get_max_force_flexural(
-            i, Bridge.cross_sections.get_cross_section(i).bottom))
+            i, Bridge.cross_sections.get_cross_section(i).bottom, train.weight))
 
     ax.plot(x, top)
     ax.plot(x, bottom)
 
-    ax.text(
-        0, 7, f'max compression: {min(top)} Mpa\nmax tension: {max(bottom)} Mpa')
+    # ax.text(
+    #     0, 7, f'max compression: {min(top)} Mpa\nmax tension: {max(bottom)} Mpa')
     ax.grid(which='both', linestyle='--', color='grey', alpha=0.5)
 
     plot_bending_moment(Bridge, train.weight, 10, ax)

@@ -8,7 +8,7 @@ class Rect():
             x_length (number): x length, right direction
             y_length (number): y length, down direction
             tags (str, optional): set a tag for use, format 'ARG1:VALUE1 ARG2:VALUE2 ...'. Defaults to None.
-            id (str, optional): set an id for use. Defaults to None.
+            id (str, optional): set an id for use, does not need to be unique. Defaults to None.
         """
         self.x = x
         self.y = y
