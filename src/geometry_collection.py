@@ -58,7 +58,13 @@ class GeometryCollection:
         return I
 
     def find_Q(self, y):
-        pass
+        Q = 0
+        for geometry_object in self:
+            new_cen = geometry_object.find_centroid_below(y)
+            if new_cen:
+                Q += geometry_object.find_area_below(y) * \
+                    abs(self.centroid - new_cen)
+        return Q
 
     def find_top(self):
         top = self.centroid
@@ -70,8 +76,8 @@ class GeometryCollection:
     def find_bottom(self):
         bottom = self.centroid
         for geometry_object in self:
-            if geometry_object.y < bottom:
-                bottom = geometry_object.y
+            if geometry_object.y-geometry_object.y_length < bottom:
+                bottom = geometry_object.y-geometry_object.y_length
         return bottom
 
     def __find_joints(self) -> None:
@@ -175,7 +181,7 @@ class GeometryCollection:
     def get_side_geometry(self):
         pass
 
-    def display_geometry(self, bounding, window_size, show_joints=False, show_data=True) -> None:
+    def display_geometry(self, bounding=(120, 100), window_size=(6, 6), show_joints=True, show_data=True) -> None:
         """display the geometry collection visually
 
         Args:

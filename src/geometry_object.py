@@ -21,7 +21,7 @@ class Rect():
 
         self.joints = None
 
-    def find_area_below(self, y: float) -> float:
+    def find_area_below(self, y: float) -> float:  # might have bugs
         """find the area below a given y
 
         Args:
@@ -31,11 +31,22 @@ class Rect():
             number: area below y
         """
         if y > self.y-self.y_length and y < self.y:  # if between rectangle
-            return self.x_length*(y - self.y-self.y_length)
+            return self.x_length*(y - (self.y-self.y_length))
         if y > self.y:  # if above rectangle
             return self.area
         if y < self.y-self.y_length:  # if below rectangle
             return 0
+
+    def find_centroid_below(self, y: float) -> float:  # might have bugs
+
+        if y > self.y-self.y_length and y < self.y:  # if between rectangle
+            new_y = y-(self.y-self.y_length)
+            new_length = self.y_length - (self.y-new_y)
+            return (new_length/2)+new_y-new_length
+        if y > self.y:  # if above rectangle
+            return self.find_centroid()
+        if y < self.y-self.y_length:  # if below rectangle
+            return None
 
     def find_I(self) -> float:
         """find the I_o for the rectangle, assumes the axis is a horizontal line
