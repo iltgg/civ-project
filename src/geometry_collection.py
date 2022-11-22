@@ -59,13 +59,22 @@ class GeometryCollection:
 
     def find_Q(self, y):
         Q = 0
-        for geometry_object in self:
-            # print(geometry_object.name)
-            new_cen = geometry_object.find_centroid_below(y)
-            # print(new_cen)
-            if new_cen:
-                Q += geometry_object.find_area_below(y) * \
-                    abs(self.centroid - new_cen)
+        if y <= self.centroid: # below centroid
+            for geometry_object in self:
+                # print(geometry_object.name)
+                new_cen = geometry_object.find_centroid_below(y)
+                # print(new_cen)
+                if new_cen:
+                    Q += geometry_object.find_area_below(y) * \
+                        abs(self.centroid - new_cen)
+        else: # above centroid
+            for geometry_object in self:
+                # print(geometry_object.name)
+                new_cen = geometry_object.find_centroid_above(y)
+                # print(new_cen)
+                if new_cen:
+                    Q += geometry_object.find_area_above(y) * \
+                        abs(self.centroid - new_cen)
         return Q
 
     def find_top(self):

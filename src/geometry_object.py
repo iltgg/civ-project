@@ -34,22 +34,39 @@ class Rect():
         """
         if y > self.y-self.y_length and y < self.y:  # if between rectangle
             return self.x_length*(self.y_length - (self.y-y))
-        if y > self.y:  # if above rectangle
+        if y >= self.y:  # if above rectangle
             return self.area
-        if y < self.y-self.y_length:  # if below rectangle
+        if y <= self.y-self.y_length:  # if below rectangle
             return 0
 
     def find_centroid_below(self, y: float) -> float:  # might have bugs
-
         if y > self.y-self.y_length and y < self.y:  # if between rectangle
             new_y = y
             new_length = self.y_length - (self.y-new_y)
-            print(new_y, new_length)
+            # print(new_y, new_length)
             return (new_length/2)+new_y-new_length
-        if y > self.y:  # if above rectangle
+        if y >= self.y:  # if above rectangle
             return self.find_centroid()
-        if y < self.y-self.y_length:  # if below rectangle
+        if y <= self.y-self.y_length:  # if below rectangle
             return None
+
+    def find_area_above(self, y: float):
+        if y > self.y-self.y_length and y < self.y:  # if between rectangle
+            return self.x_length*(self.y-y)
+        if y >= self.y:  # if above rectangle
+            return 0
+        if y <= self.y-self.y_length:  # if below rectangle
+            return self.area
+
+    def find_centroid_above(self, y):
+        if y > self.y-self.y_length and y < self.y:  # if between rectangle
+            new_length = self.y-y
+            # print(new_y, new_length)
+            return y-new_length+(new_length/2)
+        if y >= self.y:  # if above rectangle
+            return None
+        if y <= self.y-self.y_length:  # if below rectangle
+            return self.find_centroid()
 
     def find_I(self) -> float:
         """find the I_o for the rectangle, assumes the axis is a horizontal line
