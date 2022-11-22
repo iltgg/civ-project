@@ -80,27 +80,33 @@ class GeometryCollection:
                 bottom = geometry_object.y-geometry_object.y_length
         return bottom
 
+    def get_joint_heights(self):
+        pass
+
     def __find_joints(self) -> None:
         """Find the joints of all geometry objects, automatically assigns the joints to each object
         """
         for i, geometry_object in enumerate(self.geometry_objects):
             vertices = geometry_object.get_vertices()
             joints = []
+            folds = []
 
             for other_object in self.geometry_objects[:i]+self.geometry_objects[i+1:]:
+
+                joint = self.__find_collinear_side(
+                    vertices, other_object.get_vertices())
                 same_group = False
                 for group in self.geometry_object_groups:
                     if geometry_object.id in group and other_object.id in group:
                         same_group = True
-
-                if not same_group:
-                    joint = self.__find_collinear_side(
-                        vertices, other_object.get_vertices())
-
-                    if joint:
+                if joint:
+                    if same_group:
+                        folds.append(joint)
+                    else:
                         joints.append(joint)
 
             geometry_object.joints = joints
+            geometry_object.folds = folds
 
     def __find_collinear_side(self, vertices_1: Iterable, vertices_2: Iterable) -> tuple:
         """return the collinear side of two boxes, None if no collinear side exists
@@ -195,6 +201,8 @@ class GeometryCollection:
         vertices = []
         joint_codes = []
         joint_vertices = []
+        fold_codes = []
+        fold_vertices = []
 
         for geometry_object in self.geometry_objects:
             if geometry_object.get_tag('display'):
@@ -208,6 +216,11 @@ class GeometryCollection:
                             joint_vertices += joint
                             joint_vertices += (0, 0),
 
+                        for fold in geometry_object.folds:
+                            fold_codes += self.__return_code('line')
+                            fold_vertices += fold
+                            fold_vertices += (0, 0),
+
         path = Path(vertices, codes)
         pathpatch = PathPatch(path, facecolor='grey',
                               edgecolor='black', alpha=0.7)
@@ -217,6 +230,9 @@ class GeometryCollection:
             joint_path = Path(joint_vertices, joint_codes)
             joint_pathpatch = PathPatch(joint_path, edgecolor='red', lw=1)
             ax.add_patch(joint_pathpatch)
+            fold_path = Path(fold_vertices, fold_codes)
+            fold_pathpatch = PathPatch(fold_path, edgecolor='green', lw=1)
+            ax.add_patch(fold_pathpatch)
 
         if show_data:
             ax.hlines(self.find_centroid(), 0,

@@ -20,6 +20,7 @@ class Rect():
         self.id = id
 
         self.joints = None
+        self.folds = None
 
     def find_area_below(self, y: float) -> float:  # might have bugs
         """find the area below a given y
