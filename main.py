@@ -52,7 +52,8 @@ if __name__ == "__main__":
     # display_Q(section)
 
     solve_maximum_forces(b, 400, 10)
-    display_graphs((graph_sfd, graph_bmd, graph_max_flexural, graph_max_shear), 2, 2, 5, b, 400, 10)
+    display_graphs((graph_sfd, graph_bmd, graph_max_flexural,
+                   graph_max_shear), 2, 2, 5, b, 400, 10)
 
     # display_width(section)
 

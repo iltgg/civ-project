@@ -40,6 +40,14 @@ class Rect():
             return 0
 
     def find_centroid_below(self, y: float) -> float:  # might have bugs
+        """find the centroid of the object below a given y
+
+        Args:
+            y (float): y
+
+        Returns:
+            float | None: height of centroid if it exists below
+        """
         if y > self.y-self.y_length and y < self.y:  # if between rectangle
             new_y = y
             new_length = self.y_length - (self.y-new_y)
@@ -50,7 +58,15 @@ class Rect():
         if y <= self.y-self.y_length:  # if below rectangle
             return None
 
-    def find_area_above(self, y: float):
+    def find_area_above(self, y: float) -> float:
+        """find the area above a given y
+
+        Args:
+            y (float): height to find above
+
+        Returns:
+            number: area above y
+        """
         if y > self.y-self.y_length and y < self.y:  # if between rectangle
             return self.x_length*(self.y-y)
         if y >= self.y:  # if above rectangle
@@ -58,7 +74,15 @@ class Rect():
         if y <= self.y-self.y_length:  # if below rectangle
             return self.area
 
-    def find_centroid_above(self, y):
+    def find_centroid_above(self, y) -> float:
+        """find the centroid of the object above a given y
+
+        Args:
+            y (float): y
+
+        Returns:
+            float | None: height of centroid if it exists above
+        """
         if y > self.y-self.y_length and y < self.y:  # if between rectangle
             new_length = self.y-y
             # print(new_y, new_length)

@@ -11,21 +11,24 @@ maximum_bending_moments = []
 
 
 def solve_maximum_forces(Bridge, train_weight, movement_increment):
+    """solve for the maximum forces that a train will impart on a bridge, save in memory
+
+    Args:
+        Bridge (_type_): _description_
+        train_weight (_type_): _description_
+        movement_increment (_type_): _description_
+    """
     global maximum_shear_forces
     global maximum_bending_moments
 
     temp_maximum_shear_forces = []
     temp_maximum_bending_moments = []
 
-    print(len(temp_maximum_shear_forces))
-
     for i, val in enumerate(range(0, 241, movement_increment)):
         temp_maximum_shear_forces.append([])
         temp_maximum_bending_moments.append([])
-        # counter = 0
-        # print(i, val)
+
         x = np.linspace(0.01, Bridge.length-0.01, SUBDIVISIONS)
-        # print(len(x))
 
         t = train.Train(val, train_weight)
 
@@ -36,8 +39,6 @@ def solve_maximum_forces(Bridge, train_weight, movement_increment):
             temp_maximum_shear_forces[i].append(Bridge.get_shear_force(x_pos))
             temp_maximum_bending_moments[i].append(
                 Bridge.get_bending_moment(x_pos))
-
-    print(len(temp_maximum_shear_forces[1]), len(temp_maximum_shear_forces))
 
     for i in range(len(temp_maximum_shear_forces[0])):
         temp_sf = []
@@ -124,6 +125,14 @@ def graph_generic(Bridge, train_weight, movement_increment, ax):
 
 
 def graph_sfd(Bridge, train_weight, movement_increment, ax):
+    """shear force diagram
+
+    Args:
+        Bridge (_type_): _description_
+        train_weight (_type_): _description_
+        movement_increment (_type_): _description_
+        ax (_type_): _description_
+    """
     ax.set_xlabel('distance (mm)')
     ax.set_ylabel('shear force (N)')
     ax.set_title('Shear Force Diagram')
@@ -144,6 +153,14 @@ def graph_sfd(Bridge, train_weight, movement_increment, ax):
 
 
 def __graph_sfd(Bridge, train_weight, movement_increment, ax):
+    """shear force diagram, no axis change
+
+    Args:
+        Bridge (_type_): _description_
+        train_weight (_type_): _description_
+        movement_increment (_type_): _description_
+        ax (_type_): _description_
+    """
     ax.hlines(0, 0, Bridge.length, color='grey')
     for i in range(0, 241, movement_increment):
         t = train.Train(i, train_weight)  # left-most position, weight
@@ -159,6 +176,14 @@ def __graph_sfd(Bridge, train_weight, movement_increment, ax):
 
 
 def graph_bmd(Bridge, train_weight, movement_increment, ax):
+    """bending moment diagram
+
+    Args:
+        Bridge (_type_): _description_
+        train_weight (_type_): _description_
+        movement_increment (_type_): _description_
+        ax (_type_): _description_
+    """
     ax.set_xlabel('distance (mm)')
     ax.set_ylabel('bending moment (Nmm)')
     ax.set_title('Bending Moment Diagram')
@@ -184,6 +209,14 @@ def graph_bmd(Bridge, train_weight, movement_increment, ax):
 
 
 def __graph_bmd(Bridge, train_weight, movement_increment, ax):
+    """bending moment diagram, no axis change
+
+    Args:
+        Bridge (_type_): _description_
+        train_weight (_type_): _description_
+        movement_increment (_type_): _description_
+        ax (_type_): _description_
+    """
     ax.hlines(0, 0, Bridge.length, color='grey')
     for i in range(0, 241, movement_increment):
         t = train.Train(i, train_weight)  # left-most position, weight
@@ -203,6 +236,14 @@ def __graph_bmd(Bridge, train_weight, movement_increment, ax):
 
 
 def graph_max_flexural(Bridge, train_weight, movement_increment, ax):
+    """graph the maximum force from flexing
+
+    Args:
+        Bridge (_type_): _description_
+        train_weight (_type_): _description_
+        movement_increment (_type_): _description_
+        ax (_type_): _description_
+    """
     global maximum_shear_forces
     global maximum_bending_moments
 
@@ -219,15 +260,9 @@ def graph_max_flexural(Bridge, train_weight, movement_increment, ax):
 
     x = np.linspace(0.01, Bridge.length-0.01, SUBDIVISIONS)
 
-    # get positions and loads, in extra variables for clarity
-    # wheel_positions = t.get_wheel_positions()
-    # wheel_loads = t.get_point_loads()
     t = train.Train(120, 400)
-
     Bridge.solve_shear_force(
         t.get_wheel_positions(), t.get_point_loads())
-
-    print(len(maximum_bending_moments))
 
     for i, j in enumerate(x):
         temp = Bridge.get_max_force_flexural(
@@ -242,9 +277,6 @@ def graph_max_flexural(Bridge, train_weight, movement_increment, ax):
         bottom.append(temp)
         if not temp == None:
             bottom_FOS.append(temp/maximum_bending_moments[i])
-
-        # bottom.append(Bridge.get_max_force_flexural(
-        #     i, Bridge.cross_sections.get_cross_section(i).bottom))
 
     ax.plot(x, top, label='max top')
     ax.plot(x, bottom, label='max bottom')
@@ -263,12 +295,20 @@ def graph_max_flexural(Bridge, train_weight, movement_increment, ax):
 
 
 def graph_max_shear(Bridge, train_weight, movement_increment, ax):
+    """graph the maximum force from shear
+
+    Args:
+        Bridge (_type_): _description_
+        train_weight (_type_): _description_
+        movement_increment (_type_): _description_
+        ax (_type_): _description_
+    """
     global maximum_shear_forces
     global maximum_bending_moments
 
     ax.set_xlabel('distance (mm)')
     ax.set_ylabel('Force (N)')
-    ax.set_title('Flexural Stress')
+    ax.set_title('Shear Stress')
 
     ax.hlines(0, 0, Bridge.length, color='grey')
 
@@ -296,7 +336,7 @@ def graph_max_shear(Bridge, train_weight, movement_increment, ax):
     centroid_FOS = min(
         list(filter(lambda item: item is not None, centroid_FOS)))
     print(
-        f'FOS Tension: {centroid_FOS:.3f} | {centroid_FOS*t.weight:.3f}N')
+        f'FOS Shear, Centroid: {centroid_FOS:.3f} | {centroid_FOS*t.weight:.3f}N')
 
 
 def display_graphs(graphing_functions, rows, cols, size, Bridge, train_weight, movement_increment):

@@ -10,13 +10,13 @@ PRECISION = 0.001
 
 
 class GeometryCollection:
-
     def __init__(self, geometry_objects: Iterable, geometry_object_groups=(), name=None) -> None:
         """create a geometry collection object, only supports Rect() geometry objects
 
         Args:
             geometry_objects (Iterable): an array of geometry_object
             geometry_object_groups (Iterable): (ID, ID, ...), (ID, ID, ...), ...
+            name (str, optional): name of the collection
         """
         self.PRECISION = PRECISION
         self.geometry_objects = geometry_objects
@@ -58,7 +58,15 @@ class GeometryCollection:
 
         return I
 
-    def find_Q(self, y):
+    def find_Q(self, y: float) -> float:
+        """find the Q of the collection at a given y, assume the axis line is a horizontal line
+
+        Args:
+            y (float): _description_
+
+        Returns:
+            number: Q
+        """
         Q = 0
         if y <= self.centroid:  # below centroid
             for geometry_object in self:
@@ -78,21 +86,36 @@ class GeometryCollection:
                         abs(self.centroid - new_cen)
         return Q
 
-    def find_top(self):
+    def find_top(self) -> float:
+        """find the top of the collection
+
+        Returns:
+            number: the y value of the top
+        """
         top = self.centroid
         for geometry_object in self:
             if geometry_object.y > top:
                 top = geometry_object.y
         return top
 
-    def find_bottom(self):
+    def find_bottom(self) -> float:
+        """find the bottom of the collection
+
+        Returns:
+            number: the y value of the bottom
+        """
         bottom = self.centroid
         for geometry_object in self:
             if geometry_object.y-geometry_object.y_length < bottom:
                 bottom = geometry_object.y-geometry_object.y_length
         return bottom
 
-    def get_joint_heights(self):
+    def get_joint_heights(self) -> list:
+        """get an array with all the joints for each height
+
+        Returns:
+            list: a list with each index being a list of all joints at a height
+        """
         joint_heights = []
 
         for geometry_object in self:
@@ -122,13 +145,39 @@ class GeometryCollection:
 
         return sorted
 
-    def __check_same_joint(self, joint1, joint2):
+    def __check_same_joint(self, joint1: Iterable, joint2: Iterable) -> bool:
+        """check if two joints are the same
+
+        Args:
+            joint1 (tuple): joint
+            joint2 (tuple): other joint
+
+        Returns:
+            bool: True if matching
+        """
         return self.__close(joint1[0][0], joint2[0][0]) and self.__close(joint1[1][0], joint2[1][0])
 
-    def __close(self, x, y):
+    def __close(self, x: float, y: float) -> bool:
+        """wrapper for math.isclose with the PRECISION value
+
+        Args:
+            x (number): number to compare
+            y (number): number to compare
+
+        Returns:
+            bool: True if isclose()
+        """
         return isclose(x, y, abs_tol=self.PRECISION)
 
-    def find_width(self, y):
+    def find_width(self, y: float) -> float:
+        """finds the width of the collection at y, kinda hacky
+
+        Args:
+            y (number): height to find width at
+
+        Returns:
+            number: width
+        """
         dy = 0.0001
 
         A1 = 0

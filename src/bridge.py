@@ -229,24 +229,64 @@ class Bridge:
 
 class CrossSections:
     def __init__(self, cross_sections: Iterable, bounds: Iterable, types: Iterable) -> None:
+        """create a cross sections object
+
+        Args:
+            cross_sections (Iterable): list of cross section
+            bounds (Iterable): list of bounds for each cross section
+            types (Iterable): list of types for each cross section (diaphragm, ...)
+        """
         self.cross_sections = cross_sections
         self.bounds = bounds  # must be in order and correspond
         self.types = types
 
-    def get_cross_section(self, x):
+    def get_cross_section(self, x: float) -> object:
+        """get the cross section at a given x
+
+        Args:
+            x (number): distance from left of bridge
+
+        Returns:
+            GeometryCollection: a geometry collection of the cross section
+        """
         return self.cross_sections[self.__return_index(x)]
 
-    def get_cross_section_type(self, x):
+    def get_cross_section_type(self, x: float) -> str:
+        """get he cross section type at a given x
+
+        Args:
+            x (number): distance from left of bridge
+
+        Returns:
+            str: the cross section type at x
+        """
         return self.types[self.__return_index(x)]
 
-    def __return_index(self, x):
+    def __return_index(self, x: float) -> int:
+        """returns what index the x value falls within
+
+        Args:
+            x (number): an x value
+
+        Returns:
+            number: the index
+        """
         i = 0
         while not self.__return_bounded(x, self.bounds[i]):
             i += 1
 
         return i
 
-    def __return_bounded(self, x, bound):
+    def __return_bounded(self, x: float, bound: Iterable) -> bool:
+        """return if the x is within a bound
+
+        Args:
+            x (number): an x value
+            bound (Iterable): a bound in the from (a, b)
+
+        Returns:
+            bool: True if x is within the bound
+        """
         if x >= bound[0] and x <= bound[1]:
             return True
         else:
