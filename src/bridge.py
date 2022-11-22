@@ -192,8 +192,8 @@ class Bridge:
         # (M*d)(I)
 
         M = self.get_bending_moment(x)
-        I = section.find_I()
-        d = section.find_centroid() - y
+        I = section.I
+        d = section.centroid - y
 
         return (M*d)/I
 

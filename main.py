@@ -34,7 +34,7 @@ if __name__ == "__main__":
          (799.365, 800.635), (800.635, 1200)),
         types
     )
-
+    
     b = bridge.Bridge(1200, cross_sections)
 
     # r1 = geometry_object.Rect(0, 100, 30, 100)
@@ -45,7 +45,9 @@ if __name__ == "__main__":
 
     # display_max_flexural_stress(b, train.Train(100, 400))
     # display(b, 400, 10)
-    print(section.find_Q(75))
-    print(section.find_Q(section.centroid))
-    section.display_geometry()
-    display_Q(section)
+    # print(section.find_Q(75))
+    # print(section.find_Q(section.centroid))
+    # section.display_geometry()
+    # display_Q(section)
+
+    display_graphs((graph_sfd, graph_bmd, graph_max_flexural_stress), 2, 2, 5, b, 400, 10)
