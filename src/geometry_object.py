@@ -1,5 +1,5 @@
 class Rect():
-    def __init__(self, x: float, y: float, x_length: float, y_length: float, tags=None, id=None) -> None:
+    def __init__(self, x: float, y: float, x_length: float, y_length: float, tags=None, id=None, name=None) -> None:
         """create a geometry object, up is positive and right is positive
 
         Args:
@@ -18,6 +18,7 @@ class Rect():
         self.tags = TagHandler(tags, 'display:True joint-display:True')
 
         self.id = id
+        self.name = name
 
         self.joints = None
         self.folds = None
@@ -32,7 +33,7 @@ class Rect():
             number: area below y
         """
         if y > self.y-self.y_length and y < self.y:  # if between rectangle
-            return self.x_length*(y - (self.y-self.y_length))
+            return self.x_length*(self.y_length - (self.y-y))
         if y > self.y:  # if above rectangle
             return self.area
         if y < self.y-self.y_length:  # if below rectangle
@@ -41,8 +42,9 @@ class Rect():
     def find_centroid_below(self, y: float) -> float:  # might have bugs
 
         if y > self.y-self.y_length and y < self.y:  # if between rectangle
-            new_y = y-(self.y-self.y_length)
+            new_y = y
             new_length = self.y_length - (self.y-new_y)
+            print(new_y, new_length)
             return (new_length/2)+new_y-new_length
         if y > self.y:  # if above rectangle
             return self.find_centroid()

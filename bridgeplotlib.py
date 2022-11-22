@@ -186,10 +186,13 @@ def display_max_flexural_stress(Bridge, train):
 
     max_bm = maximum_bending_moment(Bridge, train.weight, 10)
     # remove None hack
+    bottom_FOS = max(
+        list(filter(lambda item: item is not None, bottom)))/max_bm
+    top_FOS = max(list(filter(lambda item: item is not None, top)))/max_bm
     print(
-        f'FOS Tension: {max(list(filter(lambda item: item is not None, bottom)))/max_bm}')
+        f'FOS Tension: {bottom_FOS:.3f} | {bottom_FOS*train.weight:.3f}N')
     print(
-        f'FOS Compression: {max(list(filter(lambda item: item is not None, top)))/max_bm}')
+        f'FOS Compression: {top_FOS:.3f} | {top_FOS*train.weight:.3f}N')
 
     plt.show()
 

@@ -60,7 +60,9 @@ class GeometryCollection:
     def find_Q(self, y):
         Q = 0
         for geometry_object in self:
+            # print(geometry_object.name)
             new_cen = geometry_object.find_centroid_below(y)
+            # print(new_cen)
             if new_cen:
                 Q += geometry_object.find_area_below(y) * \
                     abs(self.centroid - new_cen)
@@ -81,6 +83,10 @@ class GeometryCollection:
         return bottom
 
     def get_joint_heights(self):
+        joint_heights = []
+
+        for geometry_object in self:
+            pass
         pass
 
     def __find_joints(self) -> None:
@@ -299,15 +305,18 @@ class GeometryCollection:
 
 if __name__ == "__main__":
     from geometry_object import *
-    r1 = Rect(0, 75+1.27, 100, 1.27)  # top
+    r1 = Rect(0, 75+1.27, 100, 1.27, name='top')  # top
 
-    r2 = Rect(10, 75, 1.27, 75-1.27, id='folded-section')  # verticals
-    r3 = Rect(90-1.27, 75, 1.27, 75-1.27, id='folded-section')
+    r2 = Rect(10, 75, 1.27, 75-1.27, id='folded-section',
+              name='vertical-left')  # verticals
+    r3 = Rect(90-1.27, 75, 1.27, 75-1.27,
+              id='folded-section', name='vertical right')
 
-    r4 = Rect(10+1.27, 75, 5, 1.27, id='folded-section')  # lil nibs
-    r5 = Rect(90-5-1.27, 75, 5, 1.27, id='folded-section')
+    r4 = Rect(10+1.27, 75, 5, 1.27, id='folded-section',
+              name='nib-left')  # lil nibs
+    r5 = Rect(90-5-1.27, 75, 5, 1.27, id='folded-section', name='nib-right')
 
-    r6 = Rect(10, 1.27, 80, 1.27, id='folded-section')  # bottom
+    r6 = Rect(10, 1.27, 80, 1.27, id='folded-section', name='bottom')  # bottom
 
     gc = GeometryCollection((r1, r2, r3, r4, r5, r6), (('folded-section',),))
 
