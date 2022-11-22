@@ -17,13 +17,15 @@ if __name__ == "__main__":
         (r1, r2, r3, r4, r5, r6), (('folded-section',),), 'section')
 
     r1 = geometry_object.Rect(0, 75+1.27, 100, 1.27)  # top
-    r2 = geometry_object.Rect(10, 75, 1.27, 75-1.27)  # verticals
-    r3 = geometry_object.Rect(90-1.27, 75, 1.27, 75-1.27)
+    r2 = geometry_object.Rect(10, 75, 1.27, 75-1.27,
+                              id='folded-section')  # verticals
+    r3 = geometry_object.Rect(90-1.27, 75, 1.27, 75-1.27, id='folded-section')
     r4 = geometry_object.Rect(10+1.27, 75, 80-1.27 -
                               1.27, 75-1.27)  # solid section
-    r5 = geometry_object.Rect(10, 1.27, 80, 1.27)  # bottom
+    r5 = geometry_object.Rect(
+        10, 1.27, 80, 1.27, id='folded-section')  # bottom
     diaphragm = geometry_collection.GeometryCollection(
-        (r1, r2, r3, r4, r5), name='diaphragm')
+        (r1, r2, r3, r4, r5), (('folded-section',),), name='diaphragm')
 
     # diaphragm.display_geometry((120, 100), (6, 6), True)
 
@@ -58,3 +60,4 @@ if __name__ == "__main__":
     # display_width(section)
 
     # display_maximum_forces(b)
+    # diaphragm.display_geometry()

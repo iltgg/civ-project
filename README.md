@@ -2,7 +2,7 @@
 
 George Chen, Benjamin Low, Casey Takahashi
 
-I would give this an MIT lisente but I'm pretty sure making this a public repository would break the academic integrity rules or something
+I would give this an MIT license but I'm pretty sure making this a public repository would break the academic integrity rules or something
 
 ## bridgeplotlib.py
 

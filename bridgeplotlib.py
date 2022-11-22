@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from typing import Iterable
 
-from src import bridge, train, geometry_collection, geometry_object, grapher, constants
+from src import bridge, train, geometry_collection, geometry_object, constants
 
 SUBDIVISIONS = 2000
 

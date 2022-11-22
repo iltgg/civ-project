@@ -338,12 +338,14 @@ class GeometryCollection:
         ax.add_patch(pathpatch)
 
         if show_joints:
-            joint_path = Path(joint_vertices, joint_codes)
-            joint_pathpatch = PathPatch(joint_path, edgecolor='red', lw=1)
-            ax.add_patch(joint_pathpatch)
-            fold_path = Path(fold_vertices, fold_codes)
-            fold_pathpatch = PathPatch(fold_path, edgecolor='green', lw=1)
-            ax.add_patch(fold_pathpatch)
+            if len(joint_vertices) > 0:
+                joint_path = Path(joint_vertices, joint_codes)
+                joint_pathpatch = PathPatch(joint_path, edgecolor='red', lw=1)
+                ax.add_patch(joint_pathpatch)
+            if len(fold_vertices) > 0:
+                fold_path = Path(fold_vertices, fold_codes)
+                fold_pathpatch = PathPatch(fold_path, edgecolor='green', lw=1)
+                ax.add_patch(fold_pathpatch)
 
         if show_data:
             ax.hlines(self.find_centroid(), 0,
