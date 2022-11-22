@@ -110,6 +110,13 @@ class GeometryCollection:
                 bottom = geometry_object.y-geometry_object.y_length
         return bottom
 
+    def get_joint_width(self, joint_list: Iterable) -> float:
+        b = 0
+        for joint in joint_list:
+            b += abs(joint[0][0] - joint[1][0])
+
+        return b
+
     def get_joint_heights(self) -> list:
         """get an array with all the joints for each height
 
@@ -121,8 +128,6 @@ class GeometryCollection:
         for geometry_object in self:
             for joint in geometry_object.joints:
                 joint_heights.append(joint)
-
-        print(joint_heights)
 
         sorted = [[]]
         for joint in joint_heights:
@@ -420,8 +425,8 @@ if __name__ == "__main__":
 
     gc = GeometryCollection((r1, r2, r3, r4, r5, r6), (('folded-section',),))
 
-    print(gc.get_joint_heights())
+    print(gc.get_joint_width(gc.get_joint_heights()[0]))
 
     # for obj in gc:
     #     print(obj.name, obj.joints)
-    # gc.display_geometry((120, 100), (6, 6), True)
+    gc.display_geometry((120, 100), (6, 6), True)

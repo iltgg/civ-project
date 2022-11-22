@@ -338,6 +338,48 @@ def graph_max_shear(Bridge, train_weight, movement_increment, ax):
     print(
         f'FOS Shear, Centroid: {centroid_FOS:.3f} | {centroid_FOS*t.weight:.3f}N')
 
+    for joint in Bridge.get_unique_joints():  # im sorry for the spaghetti code, this was the only way
+        joint_force = []
+        joint_FOS = []
+
+        for i, j in enumerate(x):
+            bounded = False
+            for bound in joint[2]:
+                if __return_bounded(j, bound):
+                    bounded = True
+            if bounded:
+                temp = Bridge.get_max_force_shear(
+                    j, joint[0], joint[1], 2)
+                joint_force.append(temp)
+                if not temp == None:
+                    joint_FOS.append(temp/abs(maximum_shear_forces[i]))
+            else:
+                joint_force.append(None)
+
+        ax.plot(x, joint_force, label=f'max joint y={joint[0]}')
+
+        # remove None hack
+        joint_FOS = min(
+            list(filter(lambda item: item is not None, joint_FOS)))
+        print(
+            f'FOS Shear, Joint y={joint[0]}: {joint_FOS:.3f} | {joint_FOS*t.weight:.3f}N')
+
+
+def __return_bounded(x: float, bound: Iterable) -> bool:
+    """return if the x is within a bound
+
+    Args:
+        x (number): an x value
+        bound (Iterable): a bound in the from (a, b)
+
+    Returns:
+        bool: True if x is within the bound
+    """
+    if x >= bound[0] and x <= bound[1]:
+        return True
+    else:
+        return False
+
 
 def display_graphs(graphing_functions, rows, cols, size, Bridge, train_weight, movement_increment):
 

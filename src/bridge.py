@@ -226,6 +226,17 @@ class Bridge:
 
         return shear_strength/shear_stress * self.get_shear_force(x)
 
+    def get_unique_joints(self, ignore_diaphragms=True):
+        joints = []
+
+        for cross_section in self.cross_sections.unique_non_diaphragm_cross_sections:
+            section_joints = cross_section.get_joint_heights()
+            for joint in section_joints:
+                joints.append(
+                    (joint[0][0][1], cross_section.get_joint_width(joint), self.cross_sections.get_cross_section_bounds(cross_section)))
+
+        return joints
+
 
 class CrossSections:
     def __init__(self, cross_sections: Iterable, bounds: Iterable, types: Iterable) -> None:
@@ -239,6 +250,10 @@ class CrossSections:
         self.cross_sections = cross_sections
         self.bounds = bounds  # must be in order and correspond
         self.types = types
+        self.unique_cross_sections = self.__return_unique_cross_sections(
+            cross_sections)
+        self.unique_non_diaphragm_cross_sections = self.__return_unique_cross_sections(
+            cross_sections, 'diaphragm')
 
     def get_cross_section(self, x: float) -> object:
         """get the cross section at a given x
@@ -252,7 +267,7 @@ class CrossSections:
         return self.cross_sections[self.__return_index(x)]
 
     def get_cross_section_type(self, x: float) -> str:
-        """get he cross section type at a given x
+        """get the cross section type at a given x
 
         Args:
             x (number): distance from left of bridge
@@ -261,6 +276,15 @@ class CrossSections:
             str: the cross section type at x
         """
         return self.types[self.__return_index(x)]
+
+    def get_cross_section_bounds(self, cross_section: object) -> tuple:
+        bounds = []
+
+        for i, section in enumerate(self.cross_sections):
+            if cross_section is section:
+                bounds.append(self.bounds[i])
+
+        return bounds
 
     def __return_index(self, x: float) -> int:
         """returns what index the x value falls within
@@ -291,6 +315,14 @@ class CrossSections:
             return True
         else:
             return False
+
+    def __return_unique_cross_sections(self, cross_sections, exclude=None):
+        temp = []
+        for i, cross_section in enumerate(cross_sections):
+            if cross_section not in temp and self.types[i] != exclude:
+                temp.append(cross_section)
+
+        return temp
 
 
 if __name__ == "__main__":
