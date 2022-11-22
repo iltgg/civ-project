@@ -11,7 +11,7 @@ PRECISION = 0.001
 
 class GeometryCollection:
 
-    def __init__(self, geometry_objects: Iterable, geometry_object_groups=()) -> None:
+    def __init__(self, geometry_objects: Iterable, geometry_object_groups=(), name=None) -> None:
         """create a geometry collection object, only supports Rect() geometry objects
 
         Args:
@@ -21,6 +21,7 @@ class GeometryCollection:
         self.PRECISION = PRECISION
         self.geometry_objects = geometry_objects
         self.geometry_object_groups = geometry_object_groups
+        self.name = name
 
         self.__find_joints()
         self.centroid = self.find_centroid()
@@ -59,7 +60,7 @@ class GeometryCollection:
 
     def find_Q(self, y):
         Q = 0
-        if y <= self.centroid: # below centroid
+        if y <= self.centroid:  # below centroid
             for geometry_object in self:
                 # print(geometry_object.name)
                 new_cen = geometry_object.find_centroid_below(y)
@@ -67,7 +68,7 @@ class GeometryCollection:
                 if new_cen:
                     Q += geometry_object.find_area_below(y) * \
                         abs(self.centroid - new_cen)
-        else: # above centroid
+        else:  # above centroid
             for geometry_object in self:
                 # print(geometry_object.name)
                 new_cen = geometry_object.find_centroid_above(y)
@@ -95,8 +96,49 @@ class GeometryCollection:
         joint_heights = []
 
         for geometry_object in self:
-            pass
-        pass
+            for joint in geometry_object.joints:
+                joint_heights.append(joint)
+
+        print(joint_heights)
+
+        sorted = [[]]
+        for joint in joint_heights:
+            for group in sorted:
+                if len(group) == 0:
+                    group.append(joint)
+                else:
+                    if self.__close(joint[0][1], group[0][0][1]):
+                        same = False
+                        for group_member in group:
+                            if self.__check_same_joint(joint, group_member):
+                                same = True
+
+                        if not same:
+                            group.append(joint)
+                            continue
+                    else:
+                        sorted.append([joint])
+                        continue
+
+        return sorted
+
+    def __check_same_joint(self, joint1, joint2):
+        return self.__close(joint1[0][0], joint2[0][0]) and self.__close(joint1[1][0], joint2[1][0])
+
+    def __close(self, x, y):
+        return isclose(x, y, abs_tol=self.PRECISION)
+
+    def find_width(self, y):
+        dy = 0.0001
+
+        A1 = 0
+        A2 = 0
+
+        for geometry_object in self:
+            A1 += geometry_object.find_area_below(y)
+            A2 += geometry_object.find_area_below(y-dy)
+
+        return (A1 - A2) / dy
 
     def __find_joints(self) -> None:
         """Find the joints of all geometry objects, automatically assigns the joints to each object
@@ -329,4 +371,8 @@ if __name__ == "__main__":
 
     gc = GeometryCollection((r1, r2, r3, r4, r5, r6), (('folded-section',),))
 
-    gc.display_geometry((120, 100), (6, 6), True)
+    print(gc.get_joint_heights())
+
+    # for obj in gc:
+    #     print(obj.name, obj.joints)
+    # gc.display_geometry((120, 100), (6, 6), True)

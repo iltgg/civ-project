@@ -14,7 +14,7 @@ if __name__ == "__main__":
     r6 = geometry_object.Rect(
         10, 1.27, 80, 1.27, id='folded-section', name='bottom')  # bottom
     section = geometry_collection.GeometryCollection(
-        (r1, r2, r3, r4, r5, r6), (('folded-section',),))
+        (r1, r2, r3, r4, r5, r6), (('folded-section',),), 'section')
 
     r1 = geometry_object.Rect(0, 75+1.27, 100, 1.27)  # top
     r2 = geometry_object.Rect(10, 75, 1.27, 75-1.27)  # verticals
@@ -22,7 +22,8 @@ if __name__ == "__main__":
     r4 = geometry_object.Rect(10+1.27, 75, 80-1.27 -
                               1.27, 75-1.27)  # solid section
     r5 = geometry_object.Rect(10, 1.27, 80, 1.27)  # bottom
-    diaphragm = geometry_collection.GeometryCollection((r1, r2, r3, r4, r5))
+    diaphragm = geometry_collection.GeometryCollection(
+        (r1, r2, r3, r4, r5), name='diaphragm')
 
     # diaphragm.display_geometry((120, 100), (6, 6), True)
 
@@ -34,7 +35,7 @@ if __name__ == "__main__":
          (799.365, 800.635), (800.635, 1200)),
         types
     )
-    
+
     b = bridge.Bridge(1200, cross_sections)
 
     # r1 = geometry_object.Rect(0, 100, 30, 100)
@@ -50,4 +51,9 @@ if __name__ == "__main__":
     # section.display_geometry()
     # display_Q(section)
 
-    display_graphs((graph_sfd, graph_bmd, graph_max_flexural_stress), 2, 2, 5, b, 400, 10)
+    solve_maximum_forces(b, 400, 10)
+    display_graphs((graph_sfd, graph_bmd, graph_max_flexural, graph_max_shear), 2, 2, 5, b, 400, 10)
+
+    # display_width(section)
+
+    # display_maximum_forces(b)

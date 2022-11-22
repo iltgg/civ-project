@@ -197,6 +197,17 @@ class Bridge:
 
         return (M*d)/I
 
+    def get_shear_stress(self, x, y, b=None):
+        section = self.cross_sections.get_cross_section(x)
+
+        V = self.get_shear_force(x)
+        Q = section.find_Q(y)
+        I = section.I
+        if not b:
+            b = section.find_width(y)
+
+        return (V*Q)/(I*b)
+
     def get_max_force_flexural(self, x, y, ignore_diaphragms=True):
         if self.cross_sections.get_cross_section_type(x) == 'diaphragm':
             return None
@@ -206,6 +217,14 @@ class Bridge:
         if flexural_stress > 0:
             return 30/flexural_stress * self.get_bending_moment(x)
         return -6/flexural_stress * self.get_bending_moment(x)
+
+    def get_max_force_shear(self, x, y, b=None, shear_strength=4, ignore_diaphragms=True):
+        if self.cross_sections.get_cross_section_type(x) == 'diaphragm':
+            return None
+
+        shear_stress = self.get_shear_stress(x, y, b)
+
+        return shear_strength/shear_stress * self.get_shear_force(x)
 
 
 class CrossSections:
