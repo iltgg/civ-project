@@ -233,7 +233,7 @@ class Bridge:
             section_joints = cross_section.get_joint_heights()
             for joint in section_joints:
                 joints.append(
-                    (joint[0][0][1], cross_section.get_joint_width(joint), self.cross_sections.get_cross_section_bounds(cross_section)))
+                    (joint[0][0][1], cross_section.get_joint_width(joint), self.cross_sections.get_cross_section_bounds(cross_section), cross_section.name))
 
         return joints
 

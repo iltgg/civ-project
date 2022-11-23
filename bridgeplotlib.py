@@ -25,6 +25,7 @@ def solve_maximum_forces(Bridge, train_weight, movement_increment):
     temp_maximum_bending_moments = []
 
     for i, val in enumerate(range(0, 241, movement_increment)):
+        # make 120, 241, 10000000 to hack to a value
         temp_maximum_shear_forces.append([])
         temp_maximum_bending_moments.append([])
 
@@ -356,13 +357,13 @@ def graph_max_shear(Bridge, train_weight, movement_increment, ax):
             else:
                 joint_force.append(None)
 
-        ax.plot(x, joint_force, label=f'max joint y={joint[0]}')
+        ax.plot(x, joint_force, label=f'max joint {joint[3]} y={joint[0]}')
 
         # remove None hack
         joint_FOS = min(
             list(filter(lambda item: item is not None, joint_FOS)))
         print(
-            f'FOS Shear, Joint y={joint[0]}: {joint_FOS:.3f} | {joint_FOS*t.weight:.3f}N')
+            f'FOS Shear, Joint {joint[3]} y={joint[0]}: {joint_FOS:.3f} | {joint_FOS*t.weight:.3f}N')
 
 
 def __return_bounded(x: float, bound: Iterable) -> bool:
