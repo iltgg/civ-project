@@ -237,6 +237,19 @@ class Bridge:
 
         return joints
 
+    def get_board_amount(self) -> float:
+        """return the amount of board needed to construct (lower bound) in mm^2
+
+        Returns:
+            float: amount of board
+        """
+        volume = 0
+        for cross_section in self.cross_sections:
+            volume += cross_section[0].area * \
+                (cross_section[1][1]-cross_section[1][0])
+
+        return volume/1.27
+
 
 class CrossSections:
     def __init__(self, cross_sections: Iterable, bounds: Iterable, types: Iterable) -> None:
@@ -276,6 +289,17 @@ class CrossSections:
             str: the cross section type at x
         """
         return self.types[self.__return_index(x)]
+
+    def __iter__(self):
+        self.n = 0
+        return self
+
+    def __next__(self):
+        if self.n < len(self.cross_sections):
+            self.n += 1
+            return self.cross_sections[self.n-1], self.bounds[self.n-1], self.types[self.n-1]
+        else:
+            raise StopIteration
 
     def get_cross_section_bounds(self, cross_section: object) -> tuple:
         bounds = []

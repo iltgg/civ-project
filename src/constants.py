@@ -1,9 +1,10 @@
 MATERIAL_PROPERTIES = {
     'mat_board': {
         'dimensions': [813, 1016, 1.27],  # mm
-        'tensile_strength': [30],  # Mpa
-        'compressive_strength': [6],  # Mpa
-        'shear_strength': [4],  # Mpa
+        'amount': 0.826008, # m^2
+        'tensile_strength': 30,  # Mpa
+        'compressive_strength': 6,  # Mpa
+        'shear_strength': 4,  # Mpa
         'E': 4000,  # Mpa
         'poisson': 0.2  # unit less
     },

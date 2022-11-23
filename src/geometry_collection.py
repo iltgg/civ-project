@@ -28,6 +28,11 @@ class GeometryCollection:
         self.I = self.find_I()
         self.top = self.find_top()
         self.bottom = self.find_bottom()
+        self.area = self.find_area()
+    
+    def find_area(self) -> float:
+        return sum([x.area for x in self])
+
 
     def find_centroid(self) -> float:
         """find the centroid for the collective relative to y = 0, assumes the centroid is horizontal
@@ -428,6 +433,7 @@ if __name__ == "__main__":
     gc = GeometryCollection((r1, r2, r3, r4, r5, r6), (('folded-section',),))
 
     print(gc.get_joint_width(gc.get_joint_heights()[0]))
+    print(gc.find_area())
 
     # for obj in gc:
     #     print(obj.name, obj.joints)

@@ -53,9 +53,12 @@ if __name__ == "__main__":
     # section.display_geometry()
     # display_Q(section)
 
-    solve_maximum_forces(b, 400, 10)
-    display_graphs((graph_sfd, graph_bmd, graph_max_flexural,
-                   graph_max_shear), 2, 2, 5, b, 400, 10)
+    # print(b.get_board_amount()/10**6)
+
+    # solve_maximum_forces(b, 400, 1)
+    # display_graphs((graph_sfd, graph_bmd, graph_max_flexural,
+    #                graph_max_shear), 2, 2, 4, b, 400, 1)
+    # print(max(maximum_bending_moments))
 
     # display_width(section)
 
