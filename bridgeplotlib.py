@@ -236,6 +236,28 @@ def __graph_bmd(Bridge, train_weight, movement_increment, ax):
         ax.plot(x, bmd)
 
 
+def __graph_sfd_envelope(Bridge, ax):
+    global maximum_shear_forces
+    global maximum_bending_moments
+
+    abs_sfd = []
+    x = np.linspace(0.01, Bridge.length-0.01, SUBDIVISIONS)
+
+    for i in maximum_shear_forces:
+        abs_sfd.append(abs(i))
+
+    ax.plot(x, abs_sfd)
+
+
+def __graph_bmd_envelope(Bridge, ax):
+    global maximum_shear_forces
+    global maximum_bending_moments
+
+    x = np.linspace(0.01, Bridge.length-0.01, SUBDIVISIONS)
+
+    ax.plot(x, maximum_bending_moments)
+
+
 def graph_max_flexural(Bridge, train_weight, movement_increment, ax):
     """graph the maximum force from flexing
 
@@ -283,7 +305,8 @@ def graph_max_flexural(Bridge, train_weight, movement_increment, ax):
     ax.plot(x, bottom, label='max bottom')
     ax.grid(which='both', linestyle='--', color='grey', alpha=0.5)
 
-    __graph_bmd(Bridge, t.weight, 10, ax)
+    # __graph_bmd(Bridge, t.weight, 10, ax)
+    __graph_bmd_envelope(Bridge, ax)
 
     # remove None hack
     bottom_FOS = min(list(filter(lambda item: item is not None, bottom_FOS)))
@@ -331,7 +354,8 @@ def graph_max_shear(Bridge, train_weight, movement_increment, ax):
 
     ax.plot(x, centroid, label='max centroid')
     ax.grid(which='both', linestyle='--', color='grey', alpha=0.5)
-    __graph_sfd(Bridge, t.weight, 10, ax)
+    # __graph_sfd(Bridge, t.weight, 10, ax)
+    __graph_sfd_envelope(Bridge, ax)
 
     # remove None hack
     centroid_FOS = min(

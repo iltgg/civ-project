@@ -2,7 +2,10 @@ from bridgeplotlib import *
 
 if __name__ == "__main__":
 
-    r1 = geometry_object.Rect(0, 75+1.27, 100, 1.27, name='top')  # top
+    r1 = geometry_object.Rect(0, 75+1.27*2, 100, 1.27,
+                              name='top', id='laminated')  # top
+    r11 = geometry_object.Rect(
+        0, 75+1.27, 100, 1.27, name='top2', id='laminated')  # top
     r2 = geometry_object.Rect(10, 75, 1.27, 75-1.27, id='folded-section',
                               name='vertical-left')  # verticals
     r3 = geometry_object.Rect(90-1.27, 75, 1.27, 75-1.27,
@@ -14,7 +17,7 @@ if __name__ == "__main__":
     r6 = geometry_object.Rect(
         10, 1.27, 80, 1.27, id='folded-section', name='bottom')  # bottom
     section = geometry_collection.GeometryCollection(
-        (r1, r2, r3, r4, r5, r6), (('folded-section',),), 'section')
+        (r1, r2, r3, r4, r5, r6, r11), (('folded-section',), ('laminated',)), 'section')
 
     r1 = geometry_object.Rect(0, 75+1.27, 100, 1.27)  # top
     r2 = geometry_object.Rect(10, 75, 1.27, 75-1.27,
@@ -43,8 +46,8 @@ if __name__ == "__main__":
     # for joint in diaphragm.get_joint_heights():
     #     print(joint)
     # print('---------------------')
-    # for joint in section.get_joint_heights():
-    #     print(joint)
+    for joint in section.get_joint_heights():
+        print(joint)
     # diaphragm.display_geometry()
 
     # r1 = geometry_object.Rect(0, 100, 30, 100)
@@ -57,14 +60,14 @@ if __name__ == "__main__":
     # display(b, 400, 10)
     # print(section.find_Q(75))
     # print(section.find_Q(section.centroid))
-    # section.display_geometry()
+    section.display_geometry()
     # display_Q(section)
 
-    # print(b.get_board_amount()/10**6)
+    print(b.get_board_amount()/10**6)
 
-    # solve_maximum_forces(b, 400, 1)
-    # display_graphs((graph_sfd, graph_bmd, graph_max_flexural,
-    #                graph_max_shear), 2, 2, 4, b, 400, 1)
+    solve_maximum_forces(b, 400, 1)
+    display_graphs((graph_sfd, graph_bmd, graph_max_flexural,
+                   graph_max_shear), 2, 2, 4, b, 400, 1)
     # print(max(maximum_bending_moments))
 
     # display_width(section)
