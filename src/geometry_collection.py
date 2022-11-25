@@ -5,6 +5,7 @@ from matplotlib.patches import PathPatch
 import matplotlib.pyplot as plt
 
 from math import isclose
+from src import geometry_object as go
 
 PRECISION = 0.001
 
@@ -29,6 +30,9 @@ class GeometryCollection:
         self.top = self.find_top()
         self.bottom = self.find_bottom()
         self.area = self.find_area()
+
+        self.__find_joined()
+        self.__find_joints()
 
     def find_area(self) -> float:
         return sum([x.area for x in self])
@@ -209,6 +213,47 @@ class GeometryCollection:
 
         return (A1 - A2) / dy
 
+    def __find_joined(self) -> None:
+        for i, geometry_object in enumerate(self.geometry_objects):
+            if geometry_object.join_id:
+                to_join = []
+                for j, geo in enumerate(self.geometry_objects):
+                    if geo.join_id == geometry_object.join_id:
+                        to_join.append(j)
+
+                x = 0
+                x_length = self.geometry_objects[to_join[0]].x_length
+                y = 0
+                y_length = 0
+                joints = []
+
+                for x in to_join:
+                    if self.geometry_objects[x].x < x:
+                        x = self.geometry_objects[x].x
+                    if self.geometry_objects[x].y > y:
+                        y = self.geometry_objects[x].y
+                    for joint in self.geometry_objects[x].joints:
+                        contained = False
+                        for j in joints:
+                            if not self.__check_same_joint(joint, j):
+                                contained = True
+                        if not contained:
+                            joints.append(joint)
+                    y_length += self.geometry_objects[x].y_length
+
+                name = self.geometry_objects[to_join[0]].name
+                tags = self.geometry_objects[to_join[0]].tags.get_tags_str()
+
+                new_rect = go.Rect(x, y, x_length, y_length,
+                                   name=name, tags=tags)
+                new_rect.joined = joints
+
+                self.geometry_objects = [v for i, v in enumerate(
+                    self.geometry_objects) if i not in frozenset(to_join)]
+                self.geometry_objects.append(new_rect)
+                self.__find_joined()
+                return
+
     def __find_joints(self) -> None:
         """Find the joints of all geometry objects, automatically assigns the joints to each object
         """
@@ -307,6 +352,17 @@ class GeometryCollection:
 
         return bounds
 
+    def find_thin_plates(self):
+        top_flange = []
+        side_flange = []
+        vertical_flange = []
+
+        # group folded joints?????
+
+        # left to right
+
+        # if horizontal rect
+
     def find_thin_plate_type(self):
         pass
 
@@ -329,6 +385,8 @@ class GeometryCollection:
         joint_vertices = []
         fold_codes = []
         fold_vertices = []
+        join_codes = []
+        join_vertices = []
 
         for geometry_object in self.geometry_objects:
             if geometry_object.get_tag('display'):
@@ -347,6 +405,13 @@ class GeometryCollection:
                             fold_vertices += fold
                             fold_vertices += (0, 0),
 
+                        print(geometry_object.joined)
+                        if geometry_object.joined:
+                            for join in geometry_object.joined:
+                                join_codes += self.__return_code('line')
+                                join_vertices += join
+                                join_vertices += (0, 0),
+
         path = Path(vertices, codes)
         pathpatch = PathPatch(path, facecolor='grey',
                               edgecolor='black', alpha=0.7)
@@ -361,6 +426,10 @@ class GeometryCollection:
                 fold_path = Path(fold_vertices, fold_codes)
                 fold_pathpatch = PathPatch(fold_path, edgecolor='green', lw=1)
                 ax.add_patch(fold_pathpatch)
+            if len(join_vertices) > 0:
+                join_path = Path(join_vertices, join_codes)
+                join_pathpatch = PathPatch(join_path, edgecolor='purple', lw=1)
+                ax.add_patch(join_pathpatch)
 
         if show_data:
             ax.hlines(self.find_centroid(), 0,

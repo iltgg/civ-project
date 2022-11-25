@@ -1,5 +1,5 @@
 class Rect():
-    def __init__(self, x: float, y: float, x_length: float, y_length: float, tags=None, id=None, name=None) -> None:
+    def __init__(self, x: float, y: float, x_length: float, y_length: float, tags=None, id=None, name=None, join_id=None) -> None:
         """create a geometry object, up is positive and right is positive
 
         Args:
@@ -9,6 +9,7 @@ class Rect():
             y_length (number): y length, down direction
             tags (str, optional): set a tag for use, format 'ARG1:VALUE1 ARG2:VALUE2 ...'. Defaults to None.
             id (str, optional): set an id for use, does not need to be unique. Defaults to None.
+            join_id (str, optional): special join id, will attach all to all other geometry objects with same join id when a geometry collection is initialized. Only works if all geometry objects are collinear and vertically stacked Joints will be preserved for analysis and display, however the "joined" geometry objects will act as one rect (they are replaced by a new rect with combined dimensions). Defaults to None.
         """
         self.x = x
         self.y = y
@@ -19,9 +20,15 @@ class Rect():
 
         self.id = id
         self.name = name
+        self.join_id = join_id
+
+        self.horizontal = False
+        self.vertical = False
+        self.__find_horizontal_or_vertical()
 
         self.joints = None
         self.folds = None
+        self.joined = None
 
     def find_area_below(self, y: float) -> float:  # might have bugs
         """find the area below a given y
@@ -120,6 +127,16 @@ class Rect():
     def get_tag(self, tag) -> tuple:
         return self.tags.get_tag(tag)
 
+    def __find_horizontal_or_vertical(self):
+        """find and set if the rect is horizontal or vertical
+        """
+        if self.x_length > self.y_length:
+            self.horizontal = True
+        elif self.x_length < self.y_length:
+            self.vertical = False
+
+        # its a square if both this conditions pass
+
 
 class TagHandler():
     def __init__(self, tags: str, defaults: str) -> None:
@@ -151,6 +168,9 @@ class TagHandler():
             return self.tags[tag]
         except KeyError:
             return None
+
+    def get_tags_str(self):
+        return self.input_tags
 
     def __init_tags(self, tags: str) -> None:
         """sets tags
