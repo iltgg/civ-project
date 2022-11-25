@@ -390,6 +390,76 @@ def graph_max_shear(Bridge, train_weight, movement_increment, ax):
             f'FOS Shear, Joint {joint[3]} y={joint[0]}: {joint_FOS:.3f} | {joint_FOS*t.weight:.3f}N')
 
 
+def graph_max_thin_plate_buckling(Bridge, train_weight, movement_increment, ax):
+    """graph the maximum force from flexing
+
+    Args:
+        Bridge (_type_): _description_
+        train_weight (_type_): _description_
+        movement_increment (_type_): _description_
+        ax (_type_): _description_
+    """
+    global maximum_shear_forces
+    global maximum_bending_moments
+
+    ax.set_xlabel('distance (mm)')
+    ax.set_ylabel('bending moment (Nmm)')
+    ax.set_title('Thin plate buckling')
+    ax.invert_yaxis()
+    ax.hlines(0, 0, Bridge.length, color='grey')
+
+    top = []
+    top_FOS = []
+    side = []
+    side_FOS = []
+    vertical = []
+    vertical_FOS = []
+
+    x = np.linspace(0.01, Bridge.length-0.01, SUBDIVISIONS)
+
+    t = train.Train(120, 400)
+    Bridge.solve_shear_force(
+        t.get_wheel_positions(), t.get_point_loads())
+
+    for i, j in enumerate(x):
+        temp = Bridge.get_max_force_tpb_top_flange(j)
+        top.append(temp)
+        if not temp == None:
+            top_FOS.append(temp/maximum_bending_moments[i])
+
+    for i, j in enumerate(x):
+        temp = Bridge.get_max_force_tpb_side_flange(j)
+        side.append(temp)
+        if not temp == None:
+            side_FOS.append(temp/maximum_bending_moments[i])
+
+    for i, j in enumerate(x):
+        temp = Bridge.get_max_force_tpb_vertical_flange(j)
+        vertical.append(temp)
+        if not temp == None:
+            vertical_FOS.append(temp/maximum_bending_moments[i])
+
+    ax.plot(x, top, label='max top flange')
+    ax.plot(x, side, label='max side flange')
+    ax.plot(x, vertical, label='max flange')
+    ax.grid(which='both', linestyle='--', color='grey', alpha=0.5)
+
+    # __graph_bmd(Bridge, t.weight, 10, ax)
+    __graph_bmd_envelope(Bridge, ax)
+
+    # remove None hack
+    top_FOS = min(list(filter(lambda item: item is not None, top_FOS)))
+    side_FOS = min(list(filter(lambda item: item is not None, side_FOS)))
+    vertical_FOS = min(
+        list(filter(lambda item: item is not None, vertical_FOS)))
+    print(
+        f'FOS Thin Plate Buckling Top: {top_FOS:.3f} | {top_FOS*t.weight:.3f}N')
+    print(
+        f'FOS Thin Plate Buckling Side: {side_FOS:.3f} | {side_FOS*t.weight:.3f}N')
+    print(
+        f'FOS Thin Plate Buckling Vertical: {vertical_FOS:.3f} | {vertical_FOS*t.weight:.3f}N')
+
+
 def __return_bounded(x: float, bound: Iterable) -> bool:
     """return if the x is within a bound
 
@@ -414,8 +484,9 @@ def display_graphs(graphing_functions, rows, cols, size, Bridge, train_weight, m
 
     for i, graph_function in enumerate(graphing_functions):
         axes_pos = __convert_index_to_array_position(i, rows, cols)
+        print(axes_pos)
         graph_function(Bridge, train_weight, movement_increment,
-                       axes[axes_pos[0]][axes_pos[1]])
+                       axes[axes_pos[1]][axes_pos[0]])
 
     fig.legend()
     fig.tight_layout()

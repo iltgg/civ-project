@@ -250,6 +250,55 @@ class Bridge:
 
         return volume/1.27
 
+    def get_max_force_tpb_top_flange(self, x, ignore_diaphragms=True):
+        # get max stress from gemetry
+        # get stress due to compression buckling
+        # FOS * force
+
+        if self.cross_sections.get_cross_section_type(x) == 'diaphragm':
+            return None
+
+        cross_section = self.cross_sections.get_cross_section(x)
+        flanges = cross_section.top_flange
+
+        maxes = []
+
+        for flange in flanges:
+            flexural_stress = self.get_flexural_stress(x, flange[2])
+            maxes.append(-flange[-1]/flexural_stress)
+
+        return min(maxes) * self.get_bending_moment(x)
+
+    def get_max_force_tpb_side_flange(self, x, ignore_diaphragms=True):
+        if self.cross_sections.get_cross_section_type(x) == 'diaphragm':
+            return None
+
+        cross_section = self.cross_sections.get_cross_section(x)
+        flanges = cross_section.side_flange
+
+        maxes = []
+
+        for flange in flanges:
+            flexural_stress = self.get_flexural_stress(x, flange[2])
+            maxes.append(-flange[-1]/flexural_stress)
+
+        return min(maxes) * self.get_bending_moment(x)
+
+    def get_max_force_tpb_vertical_flange(self, x, ignore_diaphragms=True):
+        if self.cross_sections.get_cross_section_type(x) == 'diaphragm':
+            return None
+
+        cross_section = self.cross_sections.get_cross_section(x)
+        flanges = cross_section.vertical_flange
+
+        maxes = []
+
+        for flange in flanges:
+            flexural_stress = self.get_flexural_stress(x, flange[2])
+            maxes.append(-flange[-1]/flexural_stress)
+
+        return min(maxes) * self.get_bending_moment(x)
+
 
 class CrossSections:
     def __init__(self, cross_sections: Iterable, bounds: Iterable, types: Iterable) -> None:

@@ -1,4 +1,5 @@
 from typing import Iterable
+import math
 
 from matplotlib.path import Path
 from matplotlib.patches import PathPatch
@@ -11,7 +12,7 @@ PRECISION = 0.001
 
 
 class GeometryCollection:
-    def __init__(self, geometry_objects: Iterable, geometry_object_groups=(), name=None) -> None:
+    def __init__(self, geometry_objects: Iterable, geometry_object_groups=(), name=None, ignore_thin_plate=False) -> None:
         """create a geometry collection object, only supports Rect() geometry objects
 
         Args:
@@ -33,6 +34,14 @@ class GeometryCollection:
 
         self.__find_joined()
         self.__find_joints()
+
+        if not ignore_thin_plate:
+            self.top_flange, self.side_flange, self.vertical_flange = self.find_thin_plates()
+            # self.top_crit, self.side_crit, self.vertical_crit = self.find_thin_plate_capacities(
+            #     self.find_thin_plates())
+            self.side_shear = self.find_thin_plate_shear()
+            # self.side_crit = self.find_thin_plate_shear_capacity(
+            #     self.find_thin_plate_shear())
 
     def find_area(self) -> float:
         return sum([x.area for x in self])
@@ -352,18 +361,105 @@ class GeometryCollection:
 
         return bounds
 
-    def find_thin_plates(self):
-        top_flange = []
-        side_flange = []
-        vertical_flange = []
+    def find_top_capacities(self, thin_plate):
+        return (4*math.pi**2*4000)/(12*(1-0.2**2)) * \
+            (thin_plate[1]/thin_plate[0]) ** 2
 
-        # group folded joints?????
+    def find_side_capacities(self, thin_plate):
+        return (4*math.pi**2*4000)/(12*(1-0.2**2)) * \
+            (thin_plate[1]/thin_plate[0]) ** 2
+
+    def find_vertical_capacities(self, thin_plate):
+        return (6*math.pi**2*4000)/(12*(1-0.2**2)) * \
+            (thin_plate[1]/thin_plate[0]) ** 2
+
+    def find_thin_plates(self):
+        top_flange = []  # [(b, t, y_top, name), (b, t, y_top, name)]
+        side_flange = []  # [(b, t, y_top, name), (b, t, y_top, name)]
+        vertical_flange = []  # [(b, t, y_top, name), (b, t, y_top, name)]
+
+        # group folded joints - done
 
         # left to right
 
-        # if horizontal rect
+        # if horizontal rect and above centroid
+        # get bounds of rect until it reaches a joint,
 
-    def find_thin_plate_type(self):
+        candidates = []
+        exclusion = []
+
+        for geometry_object in self:
+            if geometry_object.horizontal and geometry_object.y > self.centroid:
+                exclude = False
+                # exclude all rects with a joint that spans their length
+                for joint in geometry_object.joints:
+                    if self.__close(self.get_joint_width((joint,)), geometry_object.x_length):
+                        exclude = True
+                if not exclude:
+                    candidates.append(geometry_object)
+                else:
+                    exclusion.append(geometry_object)
+
+        # print([v.name for v in candidates])
+
+        for candidate in candidates:
+            bounds = []
+            for joint in candidate.joints:
+                exclude = False
+                for ex in exclusion:
+                    for j in ex.joints:
+                        if self.__check_same_joint(joint, j):
+                            exclude = True
+                if not exclude:
+                    bounds.append(joint)
+            for bound in bounds:
+                bound.sort(key=lambda tup: tup[0])
+            bounds.sort(key=lambda tup: tup[0][0])
+            side_flange.append(
+                [bounds[0][0][0] - candidate.x + (bounds[0][1][0] - bounds[0][0][0])/2, candidate.y_length, candidate.y, candidate.name])
+            side_flange.append([(candidate.x+candidate.x_length) -
+                                bounds[-1][1][0]+(bounds[-1][1][0] - bounds[-1][0][0])/2, candidate.y_length, candidate.y, candidate.name])
+            for i, bound in list(enumerate(bounds))[:-1]:
+                top_flange.append(
+                    [bounds[i+1][0][0]-bound[0][0]-(bound[1][0] - bound[0][0])/2+(bounds[i+1][1][0]-bounds[i+1][0][0])/2, candidate.y_length, candidate.y, candidate.name])
+
+        candidates = []
+
+        for geometry_object in self:
+            if geometry_object.vertical and geometry_object.y > self.centroid:
+                candidates.append(geometry_object)
+
+        # print([v.name for v in candidates])
+        # print([i.name for i in self])
+
+        for candidate in candidates:
+            print(candidate.x)
+            bounds = []
+            for joint in candidate.folds:
+                if not self.__check_joint_horizontal(joint):
+                    bounds.append(joint)
+            for bound in bounds:
+                bound.sort(key=lambda tup: tup[1])
+            bounds.sort(key=lambda tup: tup[0][1])
+            print(bounds)
+
+            vertical_flange.append(
+                [candidate.y - self.centroid - (bounds[0][0][1]-bounds[0][1][1])/2, candidate.x_length, candidate.y, candidate.name])
+
+        # top_flange = []  # [(b, t, y_top, name, cap), (b, t, y_top, name, cap)]
+        # side_flange = []  # [(b, t, y_top, name, cap), (b, t, y_top, name, cap)]
+        # vertical_flange = []  # [(b, t, y_top, name, cap), (b, t, y_top, name, cap)]
+
+        for flange in top_flange:
+            flange.append(self.find_top_capacities(flange))
+        for flange in side_flange:
+            flange.append(self.find_side_capacities(flange))
+        for flange in vertical_flange:
+            flange.append(self.find_vertical_capacities(flange))
+
+        return top_flange, side_flange, vertical_flange
+
+    def find_thin_plate_shear(self):
         pass
 
     def get_side_geometry(self):
@@ -405,7 +501,7 @@ class GeometryCollection:
                             fold_vertices += fold
                             fold_vertices += (0, 0),
 
-                        print(geometry_object.joined)
+                        # print(geometry_object.joined)
                         if geometry_object.joined:
                             for join in geometry_object.joined:
                                 join_codes += self.__return_code('line')

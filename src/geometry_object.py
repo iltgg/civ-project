@@ -133,7 +133,7 @@ class Rect():
         if self.x_length > self.y_length:
             self.horizontal = True
         elif self.x_length < self.y_length:
-            self.vertical = False
+            self.vertical = True
 
         # its a square if both this conditions pass
 
