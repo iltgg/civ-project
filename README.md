@@ -12,7 +12,9 @@ I would give this an MIT license but I'm pretty sure making this a public reposi
 
 ### Quick start
 
-### bridgelib
+### bridgeplotlib
+
+`display_graphs()`
 
 ### geometry_object
 
@@ -27,5 +29,3 @@ tags:
 ### bridge
 
 ### train
-
-### grapher
