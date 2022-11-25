@@ -299,6 +299,25 @@ class Bridge:
 
         return min(maxes) * self.get_bending_moment(x)
 
+    def get_max_force_tps(self, x, ignore_diaphragms=True):
+        if self.cross_sections.get_cross_section_type(x) == 'diaphragm':
+            return None
+
+        i = self.cross_sections.get_cross_section_index(x)
+        bound = self.cross_sections.bounds[i]
+        a = bound[1]-bound[0]
+
+        cross_section = self.cross_sections.get_cross_section(x)
+        flanges = cross_section.side_shear
+
+        maxes = []
+
+        for flange in flanges:
+            shear_stress = self.get_shear_stress(x, cross_section.centroid)
+            maxes.append(abs(cross_section.find_shear_plate_capacities(flange, a)/shear_stress))
+
+        return abs(min(maxes)*self.get_shear_force(x))
+
 
 class CrossSections:
     def __init__(self, cross_sections: Iterable, bounds: Iterable, types: Iterable) -> None:
@@ -327,6 +346,17 @@ class CrossSections:
             GeometryCollection: a geometry collection of the cross section
         """
         return self.cross_sections[self.__return_index(x)]
+
+    def get_cross_section_index(self, x: float) -> int:
+        """get the cross section index at a given x
+
+        Args:
+            x (number): distance from left of bridge
+
+        Returns:
+            int: the index of the cross section
+        """
+        return self.__return_index(x)
 
     def get_cross_section_type(self, x: float) -> str:
         """get the cross section type at a given x

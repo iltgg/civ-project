@@ -459,6 +459,41 @@ def graph_max_thin_plate_buckling(Bridge, train_weight, movement_increment, ax):
     print(
         f'FOS Thin Plate Buckling Vertical: {vertical_FOS:.3f} | {vertical_FOS*t.weight:.3f}N')
 
+def graph_max_thin_plate_shear(Bridge, train_weight, movement_increment, ax):
+    global maximum_shear_forces
+    global maximum_bending_moments
+
+    ax.set_xlabel('distance (mm)')
+    ax.set_ylabel('bending moment (Nmm)')
+    ax.set_title('Thin plate shear buckling')
+    ax.hlines(0, 0, Bridge.length, color='grey')
+
+    side = []
+    side_FOS = []
+
+    x = np.linspace(0.01, Bridge.length-0.01, SUBDIVISIONS)
+
+    t = train.Train(120, 400)
+    Bridge.solve_shear_force(
+        t.get_wheel_positions(), t.get_point_loads())
+
+    for i, j in enumerate(x):
+        temp = Bridge.get_max_force_tps(j)
+        side.append(temp)
+        if not temp == None:
+            side_FOS.append(abs(temp/maximum_shear_forces[i]))
+
+    ax.plot(x, side, label='max top flange')
+    ax.grid(which='both', linestyle='--', color='grey', alpha=0.5)
+
+    # __graph_bmd(Bridge, t.weight, 10, ax)
+    __graph_sfd_envelope(Bridge, ax)
+
+    # remove None hack
+    side_FOS = min(list(filter(lambda item: item is not None, side_FOS)))
+    print(
+        f'FOS Thin Plate Shear: {side_FOS:.3f} | {side_FOS*t.weight:.3f}N')
+
 
 def __return_bounded(x: float, bound: Iterable) -> bool:
     """return if the x is within a bound
@@ -484,7 +519,7 @@ def display_graphs(graphing_functions, rows, cols, size, Bridge, train_weight, m
 
     for i, graph_function in enumerate(graphing_functions):
         axes_pos = __convert_index_to_array_position(i, rows, cols)
-        print(axes_pos)
+        # print(axes_pos)
         graph_function(Bridge, train_weight, movement_increment,
                        axes[axes_pos[1]][axes_pos[0]])
 

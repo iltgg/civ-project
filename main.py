@@ -2,9 +2,11 @@ from bridgeplotlib import *
 
 if __name__ == "__main__":
 
-    r1 = geometry_object.Rect(0, 75+1.27*2, 100, 1.27,
+    # Design 0
+
+    r11 = geometry_object.Rect(0, 75+1.27*2, 100, 1.27,
                               name='top', join_id='laminated')  # top
-    r11 = geometry_object.Rect(
+    r1 = geometry_object.Rect(
         0, 75+1.27, 100, 1.27, name='top2', join_id='laminated')  # top
     r2 = geometry_object.Rect(10, 75, 1.27, 75-1.27, id='folded-section',
                               name='vertical-left')  # verticals
@@ -17,7 +19,7 @@ if __name__ == "__main__":
     r6 = geometry_object.Rect(
         10, 1.27, 80, 1.27, id='folded-section', name='bottom')  # bottom
     section = geometry_collection.GeometryCollection(
-        (r1, r2, r3, r4, r5, r6, r11), (('folded-section',), ('laminated',)), 'section')
+        (r1, r2, r3, r4, r5, r6), (('folded-section',), ('laminated',)), 'section')
 
     r1 = geometry_object.Rect(0, 75+1.27, 100, 1.27)  # top
     r2 = geometry_object.Rect(10, 75, 1.27, 75-1.27,
@@ -61,17 +63,21 @@ if __name__ == "__main__":
     # for joint in section.get_joint_heights():
     #     print(joint)
     # diaphragm.display_geometry()
-    # print(section.top_flange)
-    # print(section.side_flange)
-    # print(section.vertical_flange)
+    # section.display_geometry()
+    print(section.top_flange)
+    print(section.side_flange)
+    print(section.vertical_flange)
+    print(section.side_shear)
     # section.display_geometry(show_joints=True)
     # display_Q(section)
 
     # print(b.get_board_amount()/10**6)
 
+    
+    
     solve_maximum_forces(b, 400, 10)
-    display_graphs((graph_sfd, graph_bmd, graph_max_flexural,
-                   graph_max_shear, graph_max_thin_plate_buckling), 2, 3, 4, b, 400, 1)
+    
+    display_graphs((graph_max_flexural, graph_max_shear, graph_max_thin_plate_buckling, graph_max_thin_plate_shear), 2, 2, 4, b, 400, 1)
     
     # print(max(maximum_bending_moments))
 

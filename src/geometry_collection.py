@@ -366,12 +366,17 @@ class GeometryCollection:
             (thin_plate[1]/thin_plate[0]) ** 2
 
     def find_side_capacities(self, thin_plate):
-        return (4*math.pi**2*4000)/(12*(1-0.2**2)) * \
+        return (0.425*math.pi**2*4000)/(12*(1-0.2**2)) * \
             (thin_plate[1]/thin_plate[0]) ** 2
 
     def find_vertical_capacities(self, thin_plate):
         return (6*math.pi**2*4000)/(12*(1-0.2**2)) * \
             (thin_plate[1]/thin_plate[0]) ** 2
+
+    def find_shear_plate_capacities(self, thin_plate, a):
+        # h w name
+        return (5*math.pi**2*4000)/(12*(1-0.2**2)) * \
+            ((thin_plate[1]/thin_plate[0])**2+(thin_plate[1]/a)**2)
 
     def find_thin_plates(self):
         top_flange = []  # [(b, t, y_top, name), (b, t, y_top, name)]
@@ -433,18 +438,21 @@ class GeometryCollection:
         # print([i.name for i in self])
 
         for candidate in candidates:
-            print(candidate.x)
+            # print(candidate.x)
             bounds = []
             for joint in candidate.folds:
+                if not self.__check_joint_horizontal(joint):
+                    bounds.append(joint)
+            for joint in candidate.joints:
                 if not self.__check_joint_horizontal(joint):
                     bounds.append(joint)
             for bound in bounds:
                 bound.sort(key=lambda tup: tup[1])
             bounds.sort(key=lambda tup: tup[0][1])
-            print(bounds)
+            # print(bounds)
 
             vertical_flange.append(
-                [candidate.y - self.centroid - (bounds[0][0][1]-bounds[0][1][1])/2, candidate.x_length, candidate.y, candidate.name])
+                [candidate.y - self.centroid - (bounds[0][1][1]-bounds[0][0][1])/2, candidate.x_length, candidate.y, candidate.name])
 
         # top_flange = []  # [(b, t, y_top, name, cap), (b, t, y_top, name, cap)]
         # side_flange = []  # [(b, t, y_top, name, cap), (b, t, y_top, name, cap)]
@@ -460,7 +468,36 @@ class GeometryCollection:
         return top_flange, side_flange, vertical_flange
 
     def find_thin_plate_shear(self):
-        pass
+        shear_plates = []  # h w name
+
+        candidates = []
+
+        for geometry_object in self:
+            if geometry_object.vertical and geometry_object.y > self.centroid:
+                candidates.append(geometry_object)
+
+        for candidate in candidates:
+            # print(candidate.x)
+            bounds = []
+            for joint in candidate.folds:
+                if not self.__check_joint_horizontal(joint):
+                    bounds.append(joint)
+            for joint in candidate.joints:
+                if not self.__check_joint_horizontal(joint):
+                    bounds.append(joint)
+            for bound in bounds:
+                bound.sort(key=lambda tup: tup[1])
+            bounds.sort(key=lambda tup: tup[0][1])
+            # print(bounds)
+
+            if len(bounds) >= 2:
+                shear_plates.append(
+                    [candidate.y - (bounds[0][1][1]-bounds[0][0][1])/2 - (bounds[-1][1][1]-bounds[-1][0][1])/2, candidate.x_length, candidate.name])
+            else:
+                shear_plates.append(
+                    [candidate.y - (bounds[0][1][1]-bounds[0][0][1])/2, candidate.x_length, candidate.name])
+
+        return shear_plates    
 
     def get_side_geometry(self):
         pass
