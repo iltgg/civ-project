@@ -2,46 +2,30 @@
 
 George Chen, Benjamin Low, Casey Takahashi
 
-stealing this code is a crime punishable by a fate worse than death (getting a 0)
+I would give this an MIT license but I'm pretty sure making this a public repository would break the academic integrity rules or something
 
-## Documentation
+## bridgeplotlib.py
 
-### deliverable-one.py
+`bridgeplotlib` is a library meant for the structural analysis of a simply supported beam bridge.
 
-Train and Bridge objects provide the needed functionality
+## Documentation WIP
 
-Example (inside main):
+### Quick start
 
-```python
-import matplotlib.pyplot as plt
+### bridgeplotlib
 
-# t = Train(146, 400) # train in middle of bridge
-t = Train(0, 400)  # left-most position, weight
-b = Bridge(1200)  # length
+`display_graphs()`
 
-# get positions and loads, in extra variables for clarity
-wheel_positions = t.get_wheel_positions()
-wheel_loads = t.get_point_loads()
+### geometry_object
 
-shear_force_data = b.calculate_shear_force(wheel_positions, wheel_loads)
+tags:
+- display:True
+- display:False
+- joint-display:True
+- joint-display:False
 
-bending_moment_data = b.calculate_bending_moment(
-    wheel_positions, wheel_loads)
+### geometry_collection
 
-# Plot data
-plt.subplot(211)
-plt.xlabel('distance (mm)')
-plt.ylabel('shear force (N)')
-plt.title('Shear Force Diagram')
-plt.step(shear_force_data[0], shear_force_data[1], where='post')
+### bridge
 
-plt.subplot(212)
-plt.xlabel('distance (mm)')
-plt.ylabel('bending moment (Nmm)')
-plt.title('Bending Moment Diagram')
-plt.gca().invert_yaxis()
-plt.plot(bending_moment_data[0], bending_moment_data[1])
-
-plt.tight_layout()
-plt.show()
-```
+### train
