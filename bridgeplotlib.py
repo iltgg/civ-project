@@ -246,7 +246,7 @@ def __graph_sfd_envelope(Bridge, ax):
     for i in maximum_shear_forces:
         abs_sfd.append(abs(i))
 
-    ax.plot(x, abs_sfd)
+    ax.plot(x, abs_sfd, 'r', label='shear force envelope')
 
 
 def __graph_bmd_envelope(Bridge, ax):
@@ -255,7 +255,7 @@ def __graph_bmd_envelope(Bridge, ax):
 
     x = np.linspace(0.01, Bridge.length-0.01, SUBDIVISIONS)
 
-    ax.plot(x, maximum_bending_moments)
+    ax.plot(x, maximum_bending_moments, 'b', label='bending moment envelope')
 
 
 def graph_max_flexural(Bridge, train_weight, movement_increment, ax):
@@ -307,6 +307,7 @@ def graph_max_flexural(Bridge, train_weight, movement_increment, ax):
 
     # __graph_bmd(Bridge, t.weight, 10, ax)
     __graph_bmd_envelope(Bridge, ax)
+    ax.legend(loc='upper right')
 
     # remove None hack
     bottom_FOS = min(list(filter(lambda item: item is not None, bottom_FOS)))
@@ -352,7 +353,7 @@ def graph_max_shear(Bridge, train_weight, movement_increment, ax):
         if not temp == None:
             centroid_FOS.append(temp/abs(maximum_shear_forces[i]))
 
-    ax.plot(x, centroid, label='max centroid')
+    ax.plot(x, centroid, 'k', label='max centroid')
     ax.grid(which='both', linestyle='--', color='grey', alpha=0.5)
     # __graph_sfd(Bridge, t.weight, 10, ax)
     __graph_sfd_envelope(Bridge, ax)
@@ -388,6 +389,8 @@ def graph_max_shear(Bridge, train_weight, movement_increment, ax):
             list(filter(lambda item: item is not None, joint_FOS)))
         print(
             f'FOS Shear, Joint {joint[3]} y={joint[0]}: {joint_FOS:.3f} | {joint_FOS*t.weight:.3f}N')
+    ax.legend(loc='upper right')
+    
 
 
 def graph_max_thin_plate_buckling(Bridge, train_weight, movement_increment, ax):
@@ -446,6 +449,7 @@ def graph_max_thin_plate_buckling(Bridge, train_weight, movement_increment, ax):
 
     # __graph_bmd(Bridge, t.weight, 10, ax)
     __graph_bmd_envelope(Bridge, ax)
+    ax.legend(loc='upper right')
 
     # remove None hack
     top_FOS = min(list(filter(lambda item: item is not None, top_FOS)))
@@ -464,7 +468,7 @@ def graph_max_thin_plate_shear(Bridge, train_weight, movement_increment, ax):
     global maximum_bending_moments
 
     ax.set_xlabel('distance (mm)')
-    ax.set_ylabel('bending moment (Nmm)')
+    ax.set_ylabel('force (N)')
     ax.set_title('Thin plate shear buckling')
     ax.hlines(0, 0, Bridge.length, color='grey')
 
@@ -488,6 +492,7 @@ def graph_max_thin_plate_shear(Bridge, train_weight, movement_increment, ax):
 
     # __graph_bmd(Bridge, t.weight, 10, ax)
     __graph_sfd_envelope(Bridge, ax)
+    ax.legend(loc='upper right')
 
     # remove None hack
     side_FOS = min(list(filter(lambda item: item is not None, side_FOS)))
@@ -523,9 +528,8 @@ def display_graphs(graphing_functions, rows, cols, size, Bridge, train_weight, m
         graph_function(Bridge, train_weight, movement_increment,
                        axes[axes_pos[1]][axes_pos[0]])
 
-    fig.legend()
+    # fig.legend()
     fig.tight_layout()
-
     plt.show()
 
 
