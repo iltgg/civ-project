@@ -29,10 +29,9 @@ class GeometryCollection:
         self.top = self.find_top()
         self.bottom = self.find_bottom()
         self.area = self.find_area()
-    
+
     def find_area(self) -> float:
         return sum([x.area for x in self])
-
 
     def find_centroid(self) -> float:
         """find the centroid for the collective relative to y = 0, assumes the centroid is horizontal
@@ -132,28 +131,39 @@ class GeometryCollection:
 
         for geometry_object in self:
             for joint in geometry_object.joints:
-                joint_heights.append(joint)
+                if self.__check_joint_horizontal(joint):
+                    joint_heights.append(joint)
 
         sorted = [[]]
+        sorted[0].append(joint_heights[0])
         for joint in joint_heights:
+            # if not self.__check_joint_horizontal(joint):
+            #     continue
+            placed = False
             for group in sorted:
-                if len(group) == 0:
-                    group.append(joint)
-                else:
-                    if self.__close(joint[0][1], group[0][0][1]):
-                        same = False
-                        for group_member in group:
-                            if self.__check_same_joint(joint, group_member):
-                                same = True
+                # if len(group) == 0:
+                #     group.append(joint)
+                #     placed = True
+                #     break
+                # else:
+                if self.__close(joint[0][1], group[0][0][1]):
+                    same = False
+                    for group_member in group:
+                        if self.__check_same_joint(joint, group_member):
+                            placed = True
+                            same = True
 
-                        if not same:
-                            group.append(joint)
-                            continue
-                    else:
-                        sorted.append([joint])
-                        continue
+                    if not same:
+                        group.append(joint)
+                        placed = True
+                        break
+            if not placed:
+                sorted.append([joint])
 
         return sorted
+
+    def __check_joint_horizontal(self, joint) -> bool:
+        return abs(joint[0][0] - joint[1][0]) > abs(joint[0][1] - joint[1][1])
 
     def __check_same_joint(self, joint1: Iterable, joint2: Iterable) -> bool:
         """check if two joints are the same

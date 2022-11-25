@@ -40,6 +40,13 @@ if __name__ == "__main__":
 
     b = bridge.Bridge(1200, cross_sections)
 
+    # for joint in diaphragm.get_joint_heights():
+    #     print(joint)
+    # print('---------------------')
+    # for joint in section.get_joint_heights():
+    #     print(joint)
+    # diaphragm.display_geometry()
+
     # r1 = geometry_object.Rect(0, 100, 30, 100)
 
     # section = geometry_collection.GeometryCollection((r1,))
