@@ -394,7 +394,7 @@ class GeometryCollection:
         exclusion = []
 
         for geometry_object in self:
-            if geometry_object.horizontal and geometry_object.y > self.centroid:
+            if geometry_object.horizontal and geometry_object.y > self.centroid and geometry_object.name != '!exclude':
                 exclude = False
                 # exclude all rects with a joint that spans their length
                 for joint in geometry_object.joints:
@@ -425,8 +425,9 @@ class GeometryCollection:
             side_flange.append([(candidate.x+candidate.x_length) -
                                 bounds[-1][1][0]+(bounds[-1][1][0] - bounds[-1][0][0])/2, candidate.y_length, candidate.y, candidate.name])
             for i, bound in list(enumerate(bounds))[:-1]:
-                top_flange.append(
-                    [bounds[i+1][0][0]-bound[0][0]-(bound[1][0] - bound[0][0])/2+(bounds[i+1][1][0]-bounds[i+1][0][0])/2, candidate.y_length, candidate.y, candidate.name])
+                if candidate.special_id != 'no top':
+                    top_flange.append(
+                        [bounds[i+1][0][0]-bound[0][0]-(bound[1][0] - bound[0][0])/2+(bounds[i+1][1][0]-bounds[i+1][0][0])/2, candidate.y_length, candidate.y, candidate.name])
 
         candidates = []
 

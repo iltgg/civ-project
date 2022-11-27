@@ -245,6 +245,7 @@ class Bridge:
         """
         volume = 0
         for cross_section in self.cross_sections:
+            # print(cross_section[0].area, cross_section[1])
             volume += cross_section[0].area * \
                 (cross_section[1][1]-cross_section[1][0])
 
@@ -414,6 +415,7 @@ class CrossSections:
         Returns:
             bool: True if x is within the bound
         """
+        # print(x)
         if x >= bound[0] and x <= bound[1]:
             return True
         else:

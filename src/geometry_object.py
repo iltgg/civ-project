@@ -1,5 +1,5 @@
 class Rect():
-    def __init__(self, x: float, y: float, x_length: float, y_length: float, tags=None, id=None, name=None, join_id=None) -> None:
+    def __init__(self, x: float, y: float, x_length: float, y_length: float, tags=None, id=None, name=None, join_id=None, special_id=None) -> None:
         """create a geometry object, up is positive and right is positive
 
         Args:
@@ -21,6 +21,7 @@ class Rect():
         self.id = id
         self.name = name
         self.join_id = join_id
+        self.special_id = special_id
 
         self.horizontal = False
         self.vertical = False
