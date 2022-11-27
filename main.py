@@ -19,7 +19,7 @@ if __name__ == "__main__":
     r6 = geometry_object.Rect(
         10, 1.27, 80, 1.27, id='folded-section', name='bottom')  # bottom
     section = geometry_collection.GeometryCollection(
-        (r1, r2, r3, r4, r5, r6), (('folded-section',), ('laminated',)), 'section')
+        (r1, r2, r3, r4, r5, r6), (('folded-section',), ('laminated',)), '')
 
     r1 = geometry_object.Rect(0, 75+1.27, 100, 1.27)  # top
     r2 = geometry_object.Rect(10, 75, 1.27, 75-1.27,
@@ -45,12 +45,12 @@ if __name__ == "__main__":
 
     b = bridge.Bridge(1200, cross_sections)
 
-    print(section.top_flange)
-    print(section.side_flange)
-    print(section.vertical_flange)
-    print(section.side_shear)
+    # print(section.top_flange)
+    # print(section.side_flange)
+    # print(section.vertical_flange)
+    # print(section.side_shear)
 
-    print(b.get_board_amount()/10**6)
+    # print(b.get_board_amount()/10**6)
 
     solve_maximum_forces(b, 400, 10)
     display_graphs((graph_max_flexural, graph_max_shear, graph_max_thin_plate_buckling, graph_max_thin_plate_shear), 2, 2, 4, b, 400, 1)

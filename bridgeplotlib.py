@@ -272,7 +272,7 @@ def graph_max_flexural(Bridge, train_weight, movement_increment, ax):
 
     ax.set_xlabel('distance (mm)')
     ax.set_ylabel('bending moment (Nmm)')
-    ax.set_title('Flexural Stress')
+    ax.set_title('Max Flexural Force')
     ax.invert_yaxis()
     ax.hlines(0, 0, Bridge.length, color='grey')
 
@@ -301,13 +301,14 @@ def graph_max_flexural(Bridge, train_weight, movement_increment, ax):
         if not temp == None:
             bottom_FOS.append(temp/maximum_bending_moments[i])
 
-    ax.plot(x, top, label='max top')
-    ax.plot(x, bottom, label='max bottom')
+    ax.plot(x, top, label='max force top')
+    ax.plot(x, bottom, label='max force bottom')
     ax.grid(which='both', linestyle='--', color='grey', alpha=0.5)
 
     # __graph_bmd(Bridge, t.weight, 10, ax)
     __graph_bmd_envelope(Bridge, ax)
-    ax.legend(loc='upper right')
+    # ax.legend(loc='upper right')
+    ax.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
 
     # remove None hack
     bottom_FOS = min(list(filter(lambda item: item is not None, bottom_FOS)))
@@ -333,7 +334,7 @@ def graph_max_shear(Bridge, train_weight, movement_increment, ax):
 
     ax.set_xlabel('distance (mm)')
     ax.set_ylabel('Force (N)')
-    ax.set_title('Shear Stress')
+    ax.set_title('Max Shear Force')
 
     ax.hlines(0, 0, Bridge.length, color='grey')
 
@@ -353,10 +354,9 @@ def graph_max_shear(Bridge, train_weight, movement_increment, ax):
         if not temp == None:
             centroid_FOS.append(temp/abs(maximum_shear_forces[i]))
 
-    ax.plot(x, centroid, 'k', label='max centroid')
+    ax.plot(x, centroid, 'k', label='max force centroid')
     ax.grid(which='both', linestyle='--', color='grey', alpha=0.5)
     # __graph_sfd(Bridge, t.weight, 10, ax)
-    __graph_sfd_envelope(Bridge, ax)
 
     # remove None hack
     centroid_FOS = min(
@@ -382,15 +382,16 @@ def graph_max_shear(Bridge, train_weight, movement_increment, ax):
             else:
                 joint_force.append(None)
 
-        ax.plot(x, joint_force, label=f'max joint {joint[3]} y={joint[0]}')
+        ax.plot(x, joint_force, label=f'max force glue joint {joint[3]} y={joint[0]}')
 
         # remove None hack
         joint_FOS = min(
             list(filter(lambda item: item is not None, joint_FOS)))
         print(
-            f'FOS Shear, Joint {joint[3]} y={joint[0]}: {joint_FOS:.3f} | {joint_FOS*t.weight:.3f}N')
-    ax.legend(loc='upper right')
-    
+            f'FOS Shear, Glue Joint {joint[3]} y={joint[0]}: {joint_FOS:.3f} | {joint_FOS*t.weight:.3f}N')
+    # ax.legend(loc='upper right')
+    __graph_sfd_envelope(Bridge, ax)
+    ax.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
 
 
 def graph_max_thin_plate_buckling(Bridge, train_weight, movement_increment, ax):
@@ -407,7 +408,7 @@ def graph_max_thin_plate_buckling(Bridge, train_weight, movement_increment, ax):
 
     ax.set_xlabel('distance (mm)')
     ax.set_ylabel('bending moment (Nmm)')
-    ax.set_title('Thin plate buckling')
+    ax.set_title('Max Thin Plate Buckling')
     ax.invert_yaxis()
     ax.hlines(0, 0, Bridge.length, color='grey')
 
@@ -442,14 +443,15 @@ def graph_max_thin_plate_buckling(Bridge, train_weight, movement_increment, ax):
         if not temp == None:
             vertical_FOS.append(temp/maximum_bending_moments[i])
 
-    ax.plot(x, top, label='max top flange')
-    ax.plot(x, side, label='max side flange')
-    ax.plot(x, vertical, label='max flange')
+    ax.plot(x, top, label='max force k=4')
+    ax.plot(x, side, label='max force k=0.425')
+    ax.plot(x, vertical, label='max force k=6')
     ax.grid(which='both', linestyle='--', color='grey', alpha=0.5)
 
     # __graph_bmd(Bridge, t.weight, 10, ax)
     __graph_bmd_envelope(Bridge, ax)
-    ax.legend(loc='upper right')
+    # ax.legend(loc='upper right')
+    ax.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
 
     # remove None hack
     top_FOS = min(list(filter(lambda item: item is not None, top_FOS)))
@@ -457,11 +459,12 @@ def graph_max_thin_plate_buckling(Bridge, train_weight, movement_increment, ax):
     vertical_FOS = min(
         list(filter(lambda item: item is not None, vertical_FOS)))
     print(
-        f'FOS Thin Plate Buckling Top: {top_FOS:.3f} | {top_FOS*t.weight:.3f}N')
+        f'FOS Thin Plate Buckling k=4: {top_FOS:.3f} | {top_FOS*t.weight:.3f}N')
     print(
-        f'FOS Thin Plate Buckling Side: {side_FOS:.3f} | {side_FOS*t.weight:.3f}N')
+        f'FOS Thin Plate Buckling k=0.425: {side_FOS:.3f} | {side_FOS*t.weight:.3f}N')
     print(
-        f'FOS Thin Plate Buckling Vertical: {vertical_FOS:.3f} | {vertical_FOS*t.weight:.3f}N')
+        f'FOS Thin Plate Buckling k=6: {vertical_FOS:.3f} | {vertical_FOS*t.weight:.3f}N')
+
 
 def graph_max_thin_plate_shear(Bridge, train_weight, movement_increment, ax):
     global maximum_shear_forces
@@ -469,7 +472,7 @@ def graph_max_thin_plate_shear(Bridge, train_weight, movement_increment, ax):
 
     ax.set_xlabel('distance (mm)')
     ax.set_ylabel('force (N)')
-    ax.set_title('Thin plate shear buckling')
+    ax.set_title('Max Thin plate Shear Buckling')
     ax.hlines(0, 0, Bridge.length, color='grey')
 
     side = []
@@ -487,17 +490,18 @@ def graph_max_thin_plate_shear(Bridge, train_weight, movement_increment, ax):
         if not temp == None:
             side_FOS.append(abs(temp/maximum_shear_forces[i]))
 
-    ax.plot(x, side, label='max top flange')
+    ax.plot(x, side, label='max force k=5')
     ax.grid(which='both', linestyle='--', color='grey', alpha=0.5)
 
     # __graph_bmd(Bridge, t.weight, 10, ax)
     __graph_sfd_envelope(Bridge, ax)
-    ax.legend(loc='upper right')
+    # ax.legend(loc='upper right')
+    ax.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
 
     # remove None hack
     side_FOS = min(list(filter(lambda item: item is not None, side_FOS)))
     print(
-        f'FOS Thin Plate Shear: {side_FOS:.3f} | {side_FOS*t.weight:.3f}N')
+        f'FOS Thin Plate Shear k=5: {side_FOS:.3f} | {side_FOS*t.weight:.3f}N')
 
 
 def __return_bounded(x: float, bound: Iterable) -> bool:
@@ -520,7 +524,7 @@ def display_graphs(graphing_functions, rows, cols, size, Bridge, train_weight, m
 
     fig, axes = plt.subplots(rows, cols)
     fig.set_figheight(size*rows)
-    fig.set_figwidth(size*cols)
+    fig.set_figwidth(size*cols*2)
 
     for i, graph_function in enumerate(graphing_functions):
         axes_pos = __convert_index_to_array_position(i, rows, cols)
@@ -529,7 +533,8 @@ def display_graphs(graphing_functions, rows, cols, size, Bridge, train_weight, m
                        axes[axes_pos[1]][axes_pos[0]])
 
     # fig.legend()
-    fig.tight_layout()
+    # fig.tight_layout()
+    fig.tight_layout(w_pad=1)
     plt.show()
 
 

@@ -18,21 +18,22 @@ floor = geometry_object.Rect(
 section_base = geometry_collection.GeometryCollection(
     (top, vertical_left, vertical_right, flange_left, flange_right, floor), (('bottom',),), name='section')
 
-# section_base.display_geometry()
+# section_base.display_geometry(bounding=(120, 120))
 
 
 def make_extendo(n):
     extendo_h = 1.27*n
 
-    top = geometry_object.Rect(0, h+x, 100, x, name='top', id='top', special_id='no top')
+    top = geometry_object.Rect(
+        0, h+x, 100, x, name='top', id='top', special_id='no top')
     vertical_left = geometry_object.Rect(
         11.865, h-extendo_h, 1.27, h-extendo_h, name='vertical left', id='bottom')
     vertical_right = geometry_object.Rect(
         86.865, h-extendo_h, 1.27, h-extendo_h, name='vertical right', id='bottom')
     flange_left = geometry_object.Rect(
-        11.865+0.1, h, 1, 0.5, name='!exclude', id='bottom')
+        11.865+0.1, h, 1, 0.5, name='!exclude', id='bottom', tags='display:False')
     flange_right = geometry_object.Rect(
-        87.135-0.1, h, 1, 0.5, name='!exclude', id='bottom')
+        87.135-0.1, h, 1, 0.5, name='!exclude', id='bottom', tags='display:False')
     # centering = geometry_object.Rect(18.135, h, 63.73, 1.27, name='center', id='bottom')
     extendo = geometry_object.Rect(
         11.865, h+x, 76.27, extendo_h+x, name='extendo', id='top')
@@ -40,7 +41,7 @@ def make_extendo(n):
         13.135, 1.27, 73.73, 1.27, name='floor', id='bottom')
 
     return geometry_collection.GeometryCollection(
-        (top, vertical_left, vertical_right, floor, extendo, flange_left, flange_right), (('bottom',), ('top',)), name=f'extendo_section-{n}')
+        (top, vertical_left, vertical_right, floor, extendo, flange_left, flange_right), (('bottom',), ('top',)), name=f'extended_section', joint_override=[((13.135, h), (86.865, h)), ((13.135, h-1.27), (86.865, h-1.27))])
 
 # extendo_section.display_geometry()
 
@@ -89,27 +90,29 @@ def bounds_creator(intervals):
     return bounds, types, sections
 
 
-bounds, types, sections = bounds_creator([30, 80, 150, 220, 290, 370, 450, 550])
+bounds, types, sections = bounds_creator(
+    [30, 80, 150, 220, 290, 370, 450, 550])
 
 # for i, section in enumerate(sections):
 #     if section.name == 'section':
 #         sections[i] = extendo_section
 
 
-print(len(bounds)) # 32
+print(len(bounds))  # 32
+extendo = make_extendo(2)
 
 # sections[14]
-sections[10] = make_extendo(2)
-sections[12] = make_extendo(2)
-sections[14] = make_extendo(2)
-sections[15] = make_extendo(2)
-sections[16] = make_extendo(2)
-sections[17] = make_extendo(2)
-sections[19] = make_extendo(2)
-sections[21] = make_extendo(2)
+sections[10] = extendo
+sections[12] = extendo
+sections[14] = extendo
+sections[15] = extendo
+sections[16] = extendo
+sections[17] = extendo
+sections[19] = extendo
+sections[21] = extendo
 # sections[15]
 print(sections[14].top_flange)
-# sections[14].display_geometry()
+sections[14].display_geometry(bounding=(120, 120))
 
 # print(bounds)
 for i, section in enumerate(sections):

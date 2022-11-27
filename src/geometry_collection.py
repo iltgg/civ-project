@@ -12,7 +12,7 @@ PRECISION = 0.001
 
 
 class GeometryCollection:
-    def __init__(self, geometry_objects: Iterable, geometry_object_groups=(), name=None, ignore_thin_plate=False) -> None:
+    def __init__(self, geometry_objects: Iterable, geometry_object_groups=(), name=None, ignore_thin_plate=False, joint_override=None) -> None:
         """create a geometry collection object, only supports Rect() geometry objects
 
         Args:
@@ -24,6 +24,7 @@ class GeometryCollection:
         self.geometry_objects = geometry_objects
         self.geometry_object_groups = geometry_object_groups
         self.name = name
+        self.joint_override = joint_override
 
         self.__find_joints()
         self.centroid = self.find_centroid()
@@ -140,12 +141,16 @@ class GeometryCollection:
         Returns:
             list: a list with each index being a list of all joints at a height
         """
+
         joint_heights = []
 
         for geometry_object in self:
             for joint in geometry_object.joints:
                 if self.__check_joint_horizontal(joint):
                     joint_heights.append(joint)
+
+        if self.joint_override:
+            joint_heights = self.joint_override
 
         sorted = [[]]
         sorted[0].append(joint_heights[0])
@@ -498,7 +503,7 @@ class GeometryCollection:
                 shear_plates.append(
                     [candidate.y - (bounds[0][1][1]-bounds[0][0][1])/2, candidate.x_length, candidate.name])
 
-        return shear_plates    
+        return shear_plates
 
     def get_side_geometry(self):
         pass
@@ -545,6 +550,13 @@ class GeometryCollection:
                                 join_codes += self.__return_code('line')
                                 join_vertices += join
                                 join_vertices += (0, 0),
+        if self.joint_override:
+            joint_codes = []
+            joint_vertices = []
+            for joint in self.joint_override:
+                joint_codes += self.__return_code('line')
+                joint_vertices += joint
+                joint_vertices += (0, 0),
 
         path = Path(vertices, codes)
         pathpatch = PathPatch(path, facecolor='grey',
