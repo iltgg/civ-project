@@ -40,79 +40,6 @@ class Bridge:
 
         return A, B
 
-    def calculate_shear_force(self, load_positions: Iterable, loads: Iterable, reactions=False):
-        """# Depreciated
-
-        Calculates the shear force in bridge
-
-        Args:
-            load_positions (iterable): positions of point loads (mm)
-            loads (iterable): force of each point load, index should match load_positions
-            reactions (bool, optional): calculated using given values if not provided
-
-        Returns:
-            tuple: (positions (mm), shear force at position (N))
-        """
-        if not reactions:
-            reactions = self.calculate_reaction_forces(load_positions, loads)
-
-        x = []
-        v = []
-
-        x.append(0)
-        v.append(0)
-
-        x.append(0)
-        v.append(reactions[0])
-
-        for i, pos in enumerate(load_positions):
-            x.append(pos)
-            v.append(v[-1]-loads[i])
-
-        x.append(self.length)
-        v.append(v[-1]+reactions[1])
-
-        return x, v
-
-    def calculate_bending_moment(self, load_positions, loads, reactions=False):
-        """# Depreciated
-
-        Calculates bending moments in bridge
-
-        Args:
-            load_positions (iterable): positions of point loads (mm)
-            loads (iterable): force of each point load, index should match load_positions
-            reactions (bool, optional): calculated using given values if not provided
-
-        Returns:
-            tuple: (positions (N), bending moment at position (Nmm))
-        """
-        if not reactions:
-            reactions = self.calculate_reaction_forces(load_positions, loads)
-
-        x = []
-        v = []
-
-        x.append(0)
-        v.append(reactions[0])
-
-        for i, pos in enumerate(load_positions):
-            x.append(pos)
-            v.append(v[-1]-loads[i])
-
-        x.append(self.length)
-
-        widths = []
-        for i in range(len(x)-1):
-            widths.append(x[i+1]-x[i])
-
-        m = []
-        m.append(0)
-        for i, shear in enumerate(v):
-            m.append(m[-1]+shear*widths[i])
-
-        return x, m
-
     def solve_shear_force(self, load_positions: Iterable, loads: Iterable, reactions=False):
         """solves and stores shear force in object, uses given loads and load positions 
 
@@ -236,20 +163,6 @@ class Bridge:
                     (joint[0][0][1], cross_section.get_joint_width(joint), self.cross_sections.get_cross_section_bounds(cross_section), cross_section.name))
 
         return joints
-
-    def get_board_amount(self) -> float:
-        """return the amount of board needed to construct (lower bound) in mm^2
-
-        Returns:
-            float: amount of board
-        """
-        volume = 0
-        for cross_section in self.cross_sections:
-            # print(cross_section[0].area, cross_section[1])
-            volume += cross_section[0].area * \
-                (cross_section[1][1]-cross_section[1][0])
-
-        return volume/1.27
 
     def get_max_force_tpb_top_flange(self, x, ignore_diaphragms=True):
         # get max stress from gemetry
