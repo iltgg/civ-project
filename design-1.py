@@ -60,14 +60,14 @@ diaphragm = geometry_collection.GeometryCollection(
     (top, bottom), name='diaphragm', ignore_thin_plate=True)
 
 
-def bounds_creator(intervals):
+def bounds_creator(intervals: list):
     """return 3 arrays with valid bounds for a bridge with diaphragms occurring at the specified x values, mirrored over the center of the bridge
 
     Args:
-        intervals (_type_): _description_
+        intervals (list): where to place diaphragms
 
     Returns:
-        _type_: _description_
+        (list, list, list): bounds, types, geometry collections
     """
     types = ['section']
     bounds = [(0, intervals[0]-0.635)]
@@ -92,6 +92,7 @@ def bounds_creator(intervals):
         reverse_bound.append([1270-bound[1], 1270-bound[0]])
     bounds.extend(reverse_bound)
     return bounds, types, sections
+
 
 # find the bounds
 bounds, types, sections = bounds_creator(
