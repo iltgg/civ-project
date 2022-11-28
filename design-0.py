@@ -45,8 +45,26 @@ b = bridge.Bridge(1200, cross_sections)
 # diaphragm.display_geometry()
 
 
+
 # solve_maximum_forces(b, 400, single_position=120) # train at center
-# solve_maximum_forces(b, 400, single_position=0) # train at corner/start
-solve_maximum_forces(b, 400, 1) # all possible positions
+solve_maximum_forces(b, 400, single_position=0) # train at corner/start
+# solve_maximum_forces(b, 400, 1)  # all possible positions
+
+intermediate = True
+if intermediate:
+    print(f'centroid: {section.centroid:.3f}')
+    print(f'I: {section.I:.3f}')
+    print(f'V max: {max(maximum_shear_forces):.3f} | ratio of P: {max(maximum_shear_forces)/400:.3f}')
+    print(f'M max: {max(maximum_bending_moments):.3f} | ratio of P: {max(maximum_bending_moments)/400:.3f}')
+    print(f'Q glue: {section.find_Q(75):.3f}')
+    print(f'b glue: {section.get_joint_width(section.get_joint_heights()[0]):.3f}')
+    print(f'Q centroid: {section.find_Q(section.centroid):.3f}')
+    print(f'b centroid: {section.find_width(section.centroid):.3f}')
+    print(f'k=0.425 t: {section.side_flange[0][1]:.3f}, b: {section.side_flange[0][0]:.3f}')
+    a = b.cross_sections.get_cross_section_bounds(section)[0]
+    print(f'k=5 t: {section.side_shear[0][1]:.3f}, h: {section.side_shear[0][0]:.3f}, a: {a[1]-a[0]+0.635:.3f}')
+    print(f'k=6 t: {section.vertical_flange[0][1]:.3f}, b: {section.vertical_flange[0][0]:.3f}')
+    print(f'k=4 t: {section.top_flange[0][1]:.3f}, b: {section.top_flange[0][0]:.3f}')
+
 display_graphs((graph_max_flexural, graph_max_shear, graph_max_thin_plate_buckling,
                graph_max_thin_plate_shear), 2, 2, 4, b, 400, 1)

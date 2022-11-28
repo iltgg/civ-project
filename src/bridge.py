@@ -301,7 +301,7 @@ class Bridge:
 
         i = self.cross_sections.get_cross_section_index(x)
         bound = self.cross_sections.bounds[i]
-        a = bound[1]-bound[0]
+        a = bound[1]-bound[0]+0.635
 
         cross_section = self.cross_sections.get_cross_section(x)
         flanges = cross_section.side_shear

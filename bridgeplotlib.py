@@ -24,7 +24,7 @@ def solve_maximum_forces(Bridge, train_weight=400, movement_increment=10, single
     temp_maximum_shear_forces = []
     temp_maximum_bending_moments = []
 
-    if single_position:
+    if single_position != None:
         i = 0
         val = single_position
         temp_maximum_shear_forces.append([])
