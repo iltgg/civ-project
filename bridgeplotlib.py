@@ -10,7 +10,7 @@ maximum_shear_forces = []
 maximum_bending_moments = []
 
 
-def solve_maximum_forces(Bridge, train_weight, movement_increment):
+def solve_maximum_forces(Bridge, train_weight=400, movement_increment=10, single_position=None):
     """solve for the maximum forces that a train will impart on a bridge, save in memory
 
     Args:
@@ -24,8 +24,9 @@ def solve_maximum_forces(Bridge, train_weight, movement_increment):
     temp_maximum_shear_forces = []
     temp_maximum_bending_moments = []
 
-    for i, val in enumerate(range(0, 241, movement_increment)):
-        # make 120, 241, 10000000 to hack to a value
+    if single_position:
+        i = 0
+        val = single_position
         temp_maximum_shear_forces.append([])
         temp_maximum_bending_moments.append([])
 
@@ -40,6 +41,25 @@ def solve_maximum_forces(Bridge, train_weight, movement_increment):
             temp_maximum_shear_forces[i].append(Bridge.get_shear_force(x_pos))
             temp_maximum_bending_moments[i].append(
                 Bridge.get_bending_moment(x_pos))
+    else:
+        for i, val in enumerate(range(0, 241, movement_increment)):
+            # make 120, 241, 10000000 to hack to a value
+            temp_maximum_shear_forces.append([])
+            temp_maximum_bending_moments.append([])
+
+            x = np.linspace(0.01, Bridge.length-0.01, SUBDIVISIONS)
+
+            t = train.Train(val, train_weight)
+
+            Bridge.solve_shear_force(
+                t.get_wheel_positions(), t.get_point_loads())
+
+            for x_pos in x:
+                # counter += 1
+                temp_maximum_shear_forces[i].append(
+                    Bridge.get_shear_force(x_pos))
+                temp_maximum_bending_moments[i].append(
+                    Bridge.get_bending_moment(x_pos))
 
     for i in range(len(temp_maximum_shear_forces[0])):
         temp_sf = []
@@ -382,7 +402,8 @@ def graph_max_shear(Bridge, train_weight, movement_increment, ax):
             else:
                 joint_force.append(None)
 
-        ax.plot(x, joint_force, label=f'max force glue joint {joint[3]} y={joint[0]}')
+        ax.plot(x, joint_force,
+                label=f'max force glue joint {joint[3]} y={joint[0]}')
 
         # remove None hack
         joint_FOS = min(

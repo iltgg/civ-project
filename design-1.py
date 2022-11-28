@@ -1,8 +1,10 @@
 from bridgeplotlib import *
 
-x = 1.27
-h = 100
+# variables to play around with
+x = 1.27  # top thickness
+h = 100  # height of bridge
 
+# make the base section
 top = geometry_object.Rect(0, h+x, 100, x, name='top')
 vertical_left = geometry_object.Rect(
     11.865, h, 1.27, h, name='vertical left', id='bottom')
@@ -18,10 +20,16 @@ floor = geometry_object.Rect(
 section_base = geometry_collection.GeometryCollection(
     (top, vertical_left, vertical_right, flange_left, flange_right, floor), (('bottom',),), name='section')
 
-# section_base.display_geometry(bounding=(120, 120))
 
+def make_extension(n: int) -> object:
+    """create an base section with n extensions added to the top
 
-def make_extendo(n):
+    Args:
+        n (number): the number of extensions to add
+
+    Returns:
+        object: a geometry collection object
+    """
     extendo_h = 1.27*n
 
     top = geometry_object.Rect(
@@ -34,7 +42,6 @@ def make_extendo(n):
         11.865+0.1, h, 1, 0.5, name='!exclude', id='bottom', tags='display:False')
     flange_right = geometry_object.Rect(
         87.135-0.1, h, 1, 0.5, name='!exclude', id='bottom', tags='display:False')
-    # centering = geometry_object.Rect(18.135, h, 63.73, 1.27, name='center', id='bottom')
     extendo = geometry_object.Rect(
         11.865, h+x, 76.27, extendo_h+x, name='extendo', id='top')
     floor = geometry_object.Rect(
@@ -43,9 +50,8 @@ def make_extendo(n):
     return geometry_collection.GeometryCollection(
         (top, vertical_left, vertical_right, floor, extendo, flange_left, flange_right), (('bottom',), ('top',)), name=f'extended_section', joint_override=[((13.135, h), (86.865, h)), ((13.135, h-1.27), (86.865, h-1.27))])
 
-# extendo_section.display_geometry()
 
-
+# make the diaphragms
 top = geometry_object.Rect(0, h+x, 100, x, name='top')
 bottom = geometry_object.Rect(
     11.865, h, 76.27, h, name='vertical left', id='bottom')
@@ -53,10 +59,16 @@ bottom = geometry_object.Rect(
 diaphragm = geometry_collection.GeometryCollection(
     (top, bottom), name='diaphragm', ignore_thin_plate=True)
 
-# diaphragm.display_geometry()
-
 
 def bounds_creator(intervals):
+    """return 3 arrays with valid bounds for a bridge with diaphragms occurring at the specified x values, mirrored over the center of the bridge
+
+    Args:
+        intervals (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     types = ['section']
     bounds = [(0, intervals[0]-0.635)]
     sections = [section_base]
@@ -72,70 +84,47 @@ def bounds_creator(intervals):
     types.append('section')
     sections.append(section_base)
     bounds.append([bounds[-1][1], 635])
-    # bounds.pop(0)
 
     types.extend(types[::-1])
     sections.extend(sections[::-1])
     reverse_bound = []
     for bound in bounds[::-1]:
         reverse_bound.append([1270-bound[1], 1270-bound[0]])
-    # bounds.extend(bounds[0:-1:-1])
     bounds.extend(reverse_bound)
-    # print(bounds)
-    # print(len(bounds))
-    # print(types)
-    # print(len(types))
-    # print(sections)
-    # print(len(sections))
     return bounds, types, sections
 
-
+# find the bounds
 bounds, types, sections = bounds_creator(
     [30, 80, 150, 220, 290, 370, 450, 550])
 
-# for i, section in enumerate(sections):
-#     if section.name == 'section':
-#         sections[i] = extendo_section
+# make an extension with n thickness
+extension = make_extension(2)
 
+# place extensions into proper section bounds
+sections[4] = extension
+sections[6] = extension
+sections[8] = extension
+sections[10] = extension
+sections[12] = extension
+sections[14] = extension
+sections[15] = extension
+sections[16] = extension
+sections[17] = extension
+sections[19] = extension
+sections[21] = extension
+sections[23] = extension
+sections[25] = extension
+sections[27] = extension
 
-print(len(bounds))  # 32
-extendo = make_extendo(2)
+# section_base.display_geometry(bounding=(120, 120))
+# diaphragm.display_geometry(bounding=(120, 120))
+# extension.display_geometry(bounding=(120, 120))
 
-# sections[14]
-sections[10] = extendo
-sections[12] = extendo
-sections[14] = extendo
-sections[15] = extendo
-sections[16] = extendo
-sections[17] = extendo
-sections[19] = extendo
-sections[21] = extendo
-# sections[15]
-print(sections[14].top_flange)
-sections[14].display_geometry(bounding=(120, 120))
-
-# print(bounds)
-for i, section in enumerate(sections):
-    print(section.name, types[i], bounds[i], i)
-# print(types)
-
-# types = ('section', 'diaphragm', 'section', 'diaphragm', 'section')
-
-# cross_sections = bridge.CrossSections(
-#     (section_base, diaphragm, section_base, diaphragm, section_base),
-#     ((0, 399.365), (399.365, 400.635), (400.635, 799.365),
-#      (799.365, 800.635), (800.635, 1200)),
-#     types
-# )
 
 cross_sections = bridge.CrossSections(sections, bounds, types)
 
 b = bridge.Bridge(1270, cross_sections)
 
-print(b.get_board_amount()/10**6)
-
-solve_maximum_forces(b, 400, 10)
+solve_maximum_forces(b, 400, 1)
 display_graphs((graph_max_flexural, graph_max_shear, graph_max_thin_plate_buckling,
                graph_max_thin_plate_shear), 2, 2, 4, b, 400, 1)
-
-# 549.8757728864432
