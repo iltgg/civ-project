@@ -6,8 +6,8 @@ class Bridge:
         """Initialize a bridge object
 
         Args:
-            length (number): length of the bridge (minus supports) in millimeters
-
+            length (number): length of the bridge in millimeters
+            cross_sections (object): a cross sections object containing bridge cross sections
         """
         self.length = length
         self.cross_sections = cross_sections

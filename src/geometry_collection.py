@@ -19,6 +19,8 @@ class GeometryCollection:
             geometry_objects (Iterable): an array of geometry_object
             geometry_object_groups (Iterable): (ID, ID, ...), (ID, ID, ...), ...
             name (str, optional): name of the collection
+            ignore_thin_plates (bool, optional): True to disable thin plate identification, useful for diaphragms
+            joint_override (list, optional): Specify joints that should be used for calculations
         """
         self.PRECISION = PRECISION
         self.geometry_objects = geometry_objects

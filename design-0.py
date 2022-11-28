@@ -42,8 +42,8 @@ b = bridge.Bridge(1200, cross_sections)
 # diaphragm.display_geometry()
 
 
-# solve_maximum_forces(b, 400, single_position=120)
-solve_maximum_forces(b, 400, single_position=0)
-# solve_maximum_forces(b, 400, 1)
+# solve_maximum_forces(b, 400, single_position=120) # train at center
+# solve_maximum_forces(b, 400, single_position=0) # train at corner/start
+solve_maximum_forces(b, 400, 1) # all possible positions
 display_graphs((graph_max_flexural, graph_max_shear, graph_max_thin_plate_buckling,
                graph_max_thin_plate_shear), 2, 2, 4, b, 400, 1)
