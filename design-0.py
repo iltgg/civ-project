@@ -1,5 +1,6 @@
 from bridgeplotlib import *
 
+# Define the cross section geometry
 r1 = geometry_object.Rect(
     0, 75+1.27, 100, 1.27, name='top', join_id='laminated')  # top
 r2 = geometry_object.Rect(10, 75, 1.27, 75, id='folded-section',
@@ -15,6 +16,8 @@ r6 = geometry_object.Rect(
 section = geometry_collection.GeometryCollection(
     (r1, r2, r3, r4, r5, r6), (('folded-section',), ('laminated',)), '')
 
+
+# Create a diaphragm
 r1 = geometry_object.Rect(0, 75+1.27, 100, 1.27)  # top
 r2 = geometry_object.Rect(10, 75, 1.27, 75-1.27,
                           id='folded-section')  # verticals
