@@ -79,6 +79,12 @@ def solve_maximum_forces(Bridge, train_weight=400, movement_increment=10, single
 
 
 def __graph_sfd_envelope(Bridge, ax):
+    """graph the shear force envelope on a given axis
+
+    Args:
+        Bridge (object): Bridge object
+        ax (object): matplotlib axis
+    """
     global maximum_shear_forces
     global maximum_bending_moments
 
@@ -92,6 +98,12 @@ def __graph_sfd_envelope(Bridge, ax):
 
 
 def __graph_bmd_envelope(Bridge, ax):
+    """graph the bending moment envelope on a given axis
+
+    Args:
+        Bridge (object): Bridge object
+        ax (object): matplotlib axis
+    """
     global maximum_shear_forces
     global maximum_bending_moments
 
@@ -101,13 +113,13 @@ def __graph_bmd_envelope(Bridge, ax):
 
 
 def graph_max_flexural(Bridge, train_weight, movement_increment, ax):
-    """graph the maximum force from flexing
+    """graph the maximum force from flexural stress
 
     Args:
-        Bridge (_type_): _description_
-        train_weight (_type_): _description_
-        movement_increment (_type_): _description_
-        ax (_type_): _description_
+        Bridge (object): Bridge object
+        train_weight (number): weight of the train
+        movement_increment (int): how much to move the train
+        ax (object): matplotlib axis
     """
     global maximum_shear_forces
     global maximum_bending_moments
@@ -163,13 +175,13 @@ def graph_max_flexural(Bridge, train_weight, movement_increment, ax):
 
 
 def graph_max_shear(Bridge, train_weight, movement_increment, ax):
-    """graph the maximum force from shear
+    """graph the maximum force from shear stress
 
     Args:
-        Bridge (_type_): _description_
-        train_weight (_type_): _description_
-        movement_increment (_type_): _description_
-        ax (_type_): _description_
+        Bridge (object): Bridge object
+        train_weight (number): weight of the train
+        movement_increment (int): how much to move the train
+        ax (object): matplotlib axis
     """
     global maximum_shear_forces
     global maximum_bending_moments
@@ -238,13 +250,13 @@ def graph_max_shear(Bridge, train_weight, movement_increment, ax):
 
 
 def graph_max_thin_plate_buckling(Bridge, train_weight, movement_increment, ax):
-    """graph the maximum force from flexing
+    """graph the maximum force from thin plate buckling
 
     Args:
-        Bridge (_type_): _description_
-        train_weight (_type_): _description_
-        movement_increment (_type_): _description_
-        ax (_type_): _description_
+        Bridge (object): Bridge object
+        train_weight (number): weight of the train
+        movement_increment (int): how much to move the train
+        ax (object): matplotlib axis
     """
     global maximum_shear_forces
     global maximum_bending_moments
@@ -310,6 +322,14 @@ def graph_max_thin_plate_buckling(Bridge, train_weight, movement_increment, ax):
 
 
 def graph_max_thin_plate_shear(Bridge, train_weight, movement_increment, ax):
+    """graph the maximum force from thin plate shear buckling
+
+    Args:
+        Bridge (object): Bridge object
+        train_weight (number): weight of the train
+        movement_increment (int): how much to move the train
+        ax (object): matplotlib axis
+    """
     global maximum_shear_forces
     global maximum_bending_moments
 
@@ -363,8 +383,18 @@ def __return_bounded(x: float, bound: Iterable) -> bool:
         return False
 
 
-def display_graphs(graphing_functions, rows, cols, size, Bridge, train_weight, movement_increment):
+def display_graphs(graphing_functions: Iterable, rows: int, cols: int, size: float, Bridge: object, train_weight: float, movement_increment: int):
+    """display the graphs given in a subplot figure
 
+    Args:
+        graphing_functions (Iterable): list of graphing function
+        rows (int): how many subplot rows to use
+        cols (int): how many subplot columns to use
+        size (float): size of each subplot
+        Bridge (object): Bridge object
+        train_weight (float): weight of the train
+        movement_increment (int): how much to move the train
+    """
     fig, axes = plt.subplots(rows, cols)
     fig.set_figheight(size*rows)
     fig.set_figwidth(size*cols*2)
@@ -375,11 +405,19 @@ def display_graphs(graphing_functions, rows, cols, size, Bridge, train_weight, m
         graph_function(Bridge, train_weight, movement_increment,
                        axes[axes_pos[1]][axes_pos[0]])
 
-    # fig.legend()
-    # fig.tight_layout()
     fig.tight_layout(w_pad=1)
     plt.show()
 
 
-def __convert_index_to_array_position(i, rows, cols):
+def __convert_index_to_array_position(i: int, rows: int, cols: int) -> tuple:
+    """convert the index of an array to the coordinates in a grid of given rows and columns
+
+    Args:
+        i (int): index
+        rows (int): rows
+        cols (int): columns
+
+    Returns:
+        (int, int): coords
+    """
     return i % cols, i // cols

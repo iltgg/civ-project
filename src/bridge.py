@@ -113,7 +113,16 @@ class Bridge:
 
         return area
 
-    def get_flexural_stress(self, x, y):
+    def get_flexural_stress(self, x: float, y: float) -> float:
+        """get the stress due to flexing at a given x and y
+
+        Args:
+            x (float): distance from left of bridge
+            y (float): distance from bottom of bridge
+
+        Returns:
+            float: stress
+        """
         section = self.cross_sections.get_cross_section(x)
 
         # (M*d)(I)
@@ -124,7 +133,17 @@ class Bridge:
 
         return (M*d)/I
 
-    def get_shear_stress(self, x, y, b=None):
+    def get_shear_stress(self, x: float, y: float, b=None) -> float:
+        """get the stress due to shear at a given x and y
+
+        Args:
+            x (float): distance from left of bridge
+            y (float): distance from bottom of bridge
+            b (float, optional): width. if not given is calculated from cross section
+
+        Returns:
+            float: stress
+        """
         section = self.cross_sections.get_cross_section(x)
 
         V = self.get_shear_force(x)
@@ -135,7 +154,18 @@ class Bridge:
 
         return (V*Q)/(I*b)
 
-    def get_max_force_flexural(self, x, y, ignore_diaphragms=True):
+    def get_max_force_flexural(self, x: float, y: float, ignore_diaphragms=True) -> float:
+        """get the max load the bridge can hold at a given x and y for flexural stress
+
+        Args:
+            x (float): distance from the left of bridge
+            y (float): distance from bottom of bridge
+            ignore_diaphragms (bool, optional): ignore diaphragms. Defaults to True.
+
+        Returns:
+            float: max load
+        """
+
         if self.cross_sections.get_cross_section_type(x) == 'diaphragm':
             return None
 
@@ -145,7 +175,18 @@ class Bridge:
             return 30/flexural_stress * self.get_bending_moment(x)
         return -6/flexural_stress * self.get_bending_moment(x)
 
-    def get_max_force_shear(self, x, y, b=None, shear_strength=4, ignore_diaphragms=True):
+    def get_max_force_shear(self, x: float, y: float, b=None, shear_strength=4, ignore_diaphragms=True) -> float:
+        """get the max load the bridge can hold at a given x and y for shear stress
+
+        Args:
+            x (float): distance from the left of bridge
+            y (float): distance from bottom of bridge
+            b (float, optional): width, if not given is calculated from cross section.
+            shear_strength (int, optional): max shear stress. Defaults to 4.
+            ignore_diaphragms (bool, optional): ignore diaphragms. Defaults to True.
+        Returns:
+            float: max load
+        """
         if self.cross_sections.get_cross_section_type(x) == 'diaphragm':
             return None
 
@@ -153,7 +194,15 @@ class Bridge:
 
         return shear_strength/shear_stress * self.get_shear_force(x)
 
-    def get_unique_joints(self, ignore_diaphragms=True):
+    def get_unique_joints(self, ignore_diaphragms=True) -> list:
+        """return a list of unique joints in the bridge
+
+        Args:
+            ignore_diaphragms (bool, optional): ignore diaphragms. Defaults to True.
+
+        Returns:
+            list: unique joints
+        """
         joints = []
 
         for cross_section in self.cross_sections.unique_non_diaphragm_cross_sections:
@@ -164,10 +213,16 @@ class Bridge:
 
         return joints
 
-    def get_max_force_tpb_top_flange(self, x, ignore_diaphragms=True):
-        # get max stress from gemetry
-        # get stress due to compression buckling
-        # FOS * force
+    def get_max_force_tpb_top_flange(self, x: float, ignore_diaphragms=True) -> float:
+        """return the max load the bridge can hold at a given x for thin plate buckling k = 4
+
+        Args:
+            x (float): distance from the left of bridge
+            ignore_diaphragms (bool, optional): ignore diaphragms. Defaults to True.
+
+        Returns:
+            float: max load
+        """
 
         if self.cross_sections.get_cross_section_type(x) == 'diaphragm':
             return None
@@ -184,6 +239,15 @@ class Bridge:
         return min(maxes) * self.get_bending_moment(x)
 
     def get_max_force_tpb_side_flange(self, x, ignore_diaphragms=True):
+        """return the max load the bridge can hold at a given x for thin plate buckling k = 0.425
+
+        Args:
+            x (float): distance from the left of bridge
+            ignore_diaphragms (bool, optional): ignore diaphragms. Defaults to True.
+
+        Returns:
+            float: max load
+        """
         if self.cross_sections.get_cross_section_type(x) == 'diaphragm':
             return None
 
@@ -199,6 +263,15 @@ class Bridge:
         return min(maxes) * self.get_bending_moment(x)
 
     def get_max_force_tpb_vertical_flange(self, x, ignore_diaphragms=True):
+        """return the max load the bridge can hold at a given x for thin plate buckling k = 6
+
+        Args:
+            x (float): distance from the left of bridge
+            ignore_diaphragms (bool, optional): ignore diaphragms. Defaults to True.
+
+        Returns:
+            float: max load
+        """
         if self.cross_sections.get_cross_section_type(x) == 'diaphragm':
             return None
 
@@ -214,6 +287,15 @@ class Bridge:
         return min(maxes) * self.get_bending_moment(x)
 
     def get_max_force_tps(self, x, ignore_diaphragms=True):
+        """return the max load the bridge can hold at a given x for thin plate shear buckling k = 5
+
+        Args:
+            x (float): distance from the left of bridge
+            ignore_diaphragms (bool, optional): ignore diaphragms. Defaults to True.
+
+        Returns:
+            float: max load
+        """
         if self.cross_sections.get_cross_section_type(x) == 'diaphragm':
             return None
 
@@ -228,7 +310,8 @@ class Bridge:
 
         for flange in flanges:
             shear_stress = self.get_shear_stress(x, cross_section.centroid)
-            maxes.append(abs(cross_section.find_shear_plate_capacities(flange, a)/shear_stress))
+            maxes.append(
+                abs(cross_section.find_shear_plate_capacities(flange, a)/shear_stress))
 
         return abs(min(maxes)*self.get_shear_force(x))
 
@@ -334,25 +417,19 @@ class CrossSections:
         else:
             return False
 
-    def __return_unique_cross_sections(self, cross_sections, exclude=None):
+    def __return_unique_cross_sections(self, cross_sections: object, exclude=None) -> list:
+        """return all unique cross sections in a bridge
+
+        Args:
+            cross_sections (object): a cross sections object
+            exclude (_type_, optional): cross section types to exclude. Defaults to None.
+
+        Returns:
+            list: list of unique cross section objects
+        """
         temp = []
         for i, cross_section in enumerate(cross_sections):
             if cross_section not in temp and self.types[i] != exclude:
                 temp.append(cross_section)
 
         return temp
-
-
-if __name__ == "__main__":
-    import train
-
-    b = Bridge(1200, 0, 0)
-    t = train.Train(100, 400)
-
-    b.solve_shear_force(t.get_wheel_positions(), t.get_point_loads())
-    # print(b.calculate_bending_moment(t.get_wheel_positions(),t.get_point_loads()))
-    print(b.x_v)
-    print(b.v)
-
-    print(b.get_shear_force(600))
-    print(b.get_bending_moment(600))

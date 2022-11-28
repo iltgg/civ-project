@@ -9,7 +9,9 @@ class Rect():
             y_length (number): y length, down direction
             tags (str, optional): set a tag for use, format 'ARG1:VALUE1 ARG2:VALUE2 ...'. Defaults to None.
             id (str, optional): set an id for use, does not need to be unique. Defaults to None.
+            name(str, optional): name of the object
             join_id (str, optional): special join id, will attach all to all other geometry objects with same join id when a geometry collection is initialized. Only works if all geometry objects are collinear and vertically stacked Joints will be preserved for analysis and display, however the "joined" geometry objects will act as one rect (they are replaced by a new rect with combined dimensions). Defaults to None.
+            special_id (str, optional): special id, for further identification purposes
         """
         self.x = x
         self.y = y
@@ -125,7 +127,15 @@ class Rect():
         """
         return (self.x, self.y), (self.x+self.x_length, self.y), (self.x+self.x_length, self.y-self.y_length), (self.x, self.y-self.y_length)
 
-    def get_tag(self, tag) -> tuple:
+    def get_tag(self, tag) -> any:
+        """return the value of a specified tag
+
+        Args:
+            tag (string): tag
+
+        Returns:
+            any: value of the tag
+        """
         return self.tags.get_tag(tag)
 
     def __find_horizontal_or_vertical(self):

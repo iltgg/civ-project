@@ -129,6 +129,14 @@ class GeometryCollection:
         return bottom
 
     def get_joint_width(self, joint_list: Iterable) -> float:
+        """get the width of a list of joints
+
+        Args:
+            joint_list (Iterable): list of joint(s)
+
+        Returns:
+            float: width of the joints
+        """
         b = 0
         for joint in joint_list:
             b += abs(joint[0][0] - joint[1][0])
@@ -180,7 +188,15 @@ class GeometryCollection:
 
         return sorted
 
-    def __check_joint_horizontal(self, joint) -> bool:
+    def __check_joint_horizontal(self, joint: Iterable) -> bool:
+        """checks if a joint is collinear with the x axis
+
+        Args:
+            joint (Iterable): joint
+
+        Returns:
+            bool: True if horizontal
+        """
         return abs(joint[0][0] - joint[1][0]) > abs(joint[0][1] - joint[1][1])
 
     def __check_same_joint(self, joint1: Iterable, joint2: Iterable) -> bool:
@@ -228,6 +244,8 @@ class GeometryCollection:
         return (A1 - A2) / dy
 
     def __find_joined(self) -> None:
+        """find and set the joined geometry objects in the collection
+        """
         for i, geometry_object in enumerate(self.geometry_objects):
             if geometry_object.join_id:
                 to_join = []
@@ -366,24 +384,62 @@ class GeometryCollection:
 
         return bounds
 
-    def find_top_capacities(self, thin_plate):
+    def find_top_capacities(self, thin_plate: list) -> float:
+        """find the capacity of a thin plate k=4
+
+        Args:
+            thin_plate (list): thin plate data
+
+        Returns:
+            float: thin plate capacity
+        """
         return (4*math.pi**2*4000)/(12*(1-0.2**2)) * \
             (thin_plate[1]/thin_plate[0]) ** 2
 
-    def find_side_capacities(self, thin_plate):
+    def find_side_capacities(self, thin_plate: list) -> float:
+        """find the capacity of a thin plate k=0.425
+
+        Args:
+            thin_plate (list): thin plate data
+
+        Returns:
+            float: thin plate capacity
+        """
         return (0.425*math.pi**2*4000)/(12*(1-0.2**2)) * \
             (thin_plate[1]/thin_plate[0]) ** 2
 
-    def find_vertical_capacities(self, thin_plate):
+    def find_vertical_capacities(self, thin_plate: list) -> float:
+        """find the capacity of a thin plate k=6
+
+        Args:
+            thin_plate (list): thin plate data
+
+        Returns:
+            float: thin plate capacity
+        """
         return (6*math.pi**2*4000)/(12*(1-0.2**2)) * \
             (thin_plate[1]/thin_plate[0]) ** 2
 
-    def find_shear_plate_capacities(self, thin_plate, a):
+    def find_shear_plate_capacities(self, thin_plate: list, a: float) -> float:
+        """find the capacity of a thin plate k=5
+
+        Args:
+            thin_plate (list): thin plate data
+            a (float): length of the thin plate
+
+        Returns:
+            float: thin plate capacity
+        """
         # h w name
         return (5*math.pi**2*4000)/(12*(1-0.2**2)) * \
             ((thin_plate[1]/thin_plate[0])**2+(thin_plate[1]/a)**2)
 
-    def find_thin_plates(self):
+    def find_thin_plates(self) -> list:
+        """find the thin plates in the collection
+
+        Returns:
+            (list, list, list): k=4 data, k=0.425 data, k=6 data
+        """
         top_flange = []  # [(b, t, y_top, name), (b, t, y_top, name)]
         side_flange = []  # [(b, t, y_top, name), (b, t, y_top, name)]
         vertical_flange = []  # [(b, t, y_top, name), (b, t, y_top, name)]
@@ -473,7 +529,13 @@ class GeometryCollection:
 
         return top_flange, side_flange, vertical_flange
 
-    def find_thin_plate_shear(self):
+    def find_thin_plate_shear(self) -> list:
+        """return the thin plates k=5 in the collection
+
+        Returns:
+            list: k=5 data
+        """
+
         shear_plates = []  # h w name
 
         candidates = []
@@ -504,9 +566,6 @@ class GeometryCollection:
                     [candidate.y - (bounds[0][1][1]-bounds[0][0][1])/2, candidate.x_length, candidate.name])
 
         return shear_plates
-
-    def get_side_geometry(self):
-        pass
 
     def display_geometry(self, bounding=(120, 100), window_size=(6, 6), show_joints=True, show_data=True) -> None:
         """display the geometry collection visually
@@ -638,28 +697,3 @@ class GeometryCollection:
             return self.geometry_objects[self.n-1]
         else:
             raise StopIteration
-
-
-if __name__ == "__main__":
-    from geometry_object import *
-    r1 = Rect(0, 75+1.27, 100, 1.27, name='top')  # top
-
-    r2 = Rect(10, 75, 1.27, 75-1.27, id='folded-section',
-              name='vertical-left')  # verticals
-    r3 = Rect(90-1.27, 75, 1.27, 75-1.27,
-              id='folded-section', name='vertical right')
-
-    r4 = Rect(10+1.27, 75, 5, 1.27, id='folded-section',
-              name='nib-left')  # lil nibs
-    r5 = Rect(90-5-1.27, 75, 5, 1.27, id='folded-section', name='nib-right')
-
-    r6 = Rect(10, 1.27, 80, 1.27, id='folded-section', name='bottom')  # bottom
-
-    gc = GeometryCollection((r1, r2, r3, r4, r5, r6), (('folded-section',),))
-
-    print(gc.get_joint_width(gc.get_joint_heights()[0]))
-    print(gc.find_area())
-
-    # for obj in gc:
-    #     print(obj.name, obj.joints)
-    gc.display_geometry((120, 100), (6, 6), True)
