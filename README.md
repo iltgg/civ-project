@@ -2,15 +2,27 @@
 
 George Chen, Benjamin Low, Casey Takahashi
 
-## bridgeplotlib.py
+- [CIV102 Python Bridge Calculator](#civ102-python-bridge-calculator)
+  - [bridgeplotlib](#bridgeplotlib)
+    - [Quick start](#quick-start)
+    - [design-final output](#design-final-output)
+  - [bridgeplotlib.py](#bridgeplotlibpy)
+    - [geometry\_object](#geometry_object)
+    - [geometry\_collection](#geometry_collection)
+    - [bridge](#bridge)
+    - [train](#train)
+
+
+## bridgeplotlib
 
 `bridgeplotlib` is a library meant for the structural analysis of a simply supported beam bridge.
 
 ### Quick start
 
-See design-0.py or design-1.py for examples
+See design-0.py or design-final.py for examples
 
 General process:
+
 1. `from bridgeplotlib import *` to use all associated modules
 2. Create geometry objects
 3. Use geometry objects to create geometry collections, i.e cross sections for bridge
@@ -19,9 +31,16 @@ General process:
 6. Solve for max forces at all train locations or a specific train location using `solve_maximum_forces(...)`
 7. Display graphs and print FOS and max loads using `display_graphs()`
 
-### bridgeplotlib
+### design-final output
 
-Contains all functions necessary to graph maximum force and find FOS 
+![main section cross section](/img/main-section.png)
+![outer section cross section](/img/outer-section.png)
+![diaphragm section cross section](/img/diaphragm-section.png)
+![calculation results](/img/results.png)
+
+## bridgeplotlib.py
+
+Contains all functions necessary to graph maximum force and find FOS
 
 ### geometry_object
 
@@ -90,6 +109,7 @@ class CrossSections:
             types (Iterable): list of types for each cross section (diaphragm, ...)
         """
 ```
+
 ### train
 
 ```python
